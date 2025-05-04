@@ -1,0 +1,7 @@
+taskilo/node_modules
+server/node_modules
+taskilo/dist/
+server/dist/
+taskilo/.env
+server/.env
+taskilo/.next/
