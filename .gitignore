@@ -6,20 +6,20 @@ taskilo/.env
 server/.env
 taskilo/.next/
 
-# Ignore all node_modules folders
-**/node_modules/
+# # Ignore all node_modules folders
+# **/node_modules/
 
-# Ignore all dist and .next build folders
-**/dist/
-**/.next/
+# # Ignore all dist and .next build folders
+# **/dist/
+# **/.next/
 
-# Ignore environment files
-**/.env
+# # Ignore environment files
+# **/.env
 
-# Logs and system files
-*.log
-.DS_Store
-Thumbs.db
+# # Logs and system files
+# *.log
+# .DS_Store
+# Thumbs.db
 
-# TypeScript build info
-*.tsbuildinfo
+# # TypeScript build info
+# *.tsbuildinfo
