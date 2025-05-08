@@ -11,8 +11,6 @@ import commentRoutes from "./routes/commentRoutes";
 import searchRoutes from "./routes/searchRoutes";
 import userRoutes from "./routes/userRoutes";
 import teamRoutes from "./routes/teamRoutes";
-/* Test */
-import { PrismaClient } from "@prisma/client";
 
 /* CONFIGURATION */
 dotenv.config();
@@ -25,8 +23,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
-const prisma = new PrismaClient(); //test
-
 /* ROUTS */
 app.get("/", (req, res) => {
   res.send("This is home routs");
@@ -38,15 +34,6 @@ app.use("/comments", commentRoutes);
 app.use("/search", searchRoutes);
 app.use("/users", userRoutes);
 app.use("/teams", teamRoutes);
-
-app.get("/db-test", async (req, res) => {
-  try {
-    const result = await prisma.$queryRaw<{ now: Date }[]>`SELECT NOW()`;
-    res.status(200).json({ connected: true, time: result[0].now });
-  } catch (err: any) {
-    res.status(500).json({ connected: false, error: err.message });
-  }
-});
 
 /* SERVER */
 const port = Number(process.env.PORT) || 3000;
