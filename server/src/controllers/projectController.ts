@@ -48,15 +48,14 @@ export const createProject = async (
 ): Promise<void> => {
   const { name, description, startDate, endDate } = req.body;
 
-  //  Log the incoming body for debugging
-  console.log(" Incoming project body:", req.body);
+  // Log everything to see the issue
+  console.log("📥 Incoming project body:", req.body);
 
   try {
     const newProject = await prisma.project.create({
       data: {
         name,
         description,
-        //  Convert to Date objects or leave undefined if missing
         startDate: startDate ? new Date(startDate) : undefined,
         endDate: endDate ? new Date(endDate) : undefined,
       },
@@ -64,9 +63,7 @@ export const createProject = async (
 
     res.status(201).json(newProject);
   } catch (error: any) {
-    //  Log the actual error to help debug in PM2 logs
-    console.error(" Error creating project:", error);
-
+    console.error("❌ Full error:", JSON.stringify(error, null, 2));
     res
       .status(500)
       .json({ message: `Error creating project: ${error.message}` });
