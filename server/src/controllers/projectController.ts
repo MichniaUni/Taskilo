@@ -19,25 +19,57 @@ export const getProjects = async (
 };
 
 // Creat Project
+// export const createProject = async (
+//   req: Request,
+//   res: Response
+// ): Promise<void> => {
+//   const { name, description, startDate, endDate } = req.body;
+//   try {
+//     const newProject = await prisma.project.create({
+//       data: {
+//         name,
+//         description,
+//         startDate,
+//         endDate,
+//       },
+//     });
+//     res.status(201).json(newProject);
+//   } catch (error: any) {
+//     res
+//       .status(500)
+//       .json({ message: `Error creating projects: ${error.message}` });
+//   }
+// };
+
+// Create Project
 export const createProject = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   const { name, description, startDate, endDate } = req.body;
+
+  //  Log the incoming body for debugging
+  console.log(" Incoming project body:", req.body);
+
   try {
     const newProject = await prisma.project.create({
       data: {
         name,
         description,
-        startDate,
-        endDate,
+        //  Convert to Date objects or leave undefined if missing
+        startDate: startDate ? new Date(startDate) : undefined,
+        endDate: endDate ? new Date(endDate) : undefined,
       },
     });
+
     res.status(201).json(newProject);
   } catch (error: any) {
+    //  Log the actual error to help debug in PM2 logs
+    console.error(" Error creating project:", error);
+
     res
       .status(500)
-      .json({ message: `Error creating projects: ${error.message}` });
+      .json({ message: `Error creating project: ${error.message}` });
   }
 };
 
@@ -88,8 +120,8 @@ export const updateProject = async (
     res.json(updatedProject);
   } catch (error: any) {
     console.error("Error updating project:", error);
-    res.status(500).json({ message: `Error updating project: ${error.message}` });
+    res
+      .status(500)
+      .json({ message: `Error updating project: ${error.message}` });
   }
 };
-
-
