@@ -27,10 +27,29 @@ export const getTasks = async (req: Request, res: Response): Promise<void> => {
 };
 
 // Creat Task
+// export const createTask = async (
+//   req: Request,
+//   res: Response
+// ): Promise<void> => {
+//   const {
+//     title,
+//     description,
+//     status,
+//     priority,
+//     tags,
+//     startDate,
+//     dueDate,
+//     points,
+//     projectId,
+//     authorUserId,
+//     assignedUserId,
+//   } = req.body;
 export const createTask = async (
   req: Request,
   res: Response
 ): Promise<void> => {
+  const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+
   const {
     title,
     description,
@@ -43,7 +62,8 @@ export const createTask = async (
     projectId,
     authorUserId,
     assignedUserId,
-  } = req.body;
+  } = body;
+
   try {
     const newTask = await prisma.task.create({
       data: {
