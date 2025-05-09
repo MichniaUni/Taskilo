@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// Get Tasks
+// Get Users
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
     const users = await prisma.user.findMany();
@@ -15,6 +15,22 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+// Get User
+export const getUser = async (req: Request, res: Response): Promise<void> => {
+  const { cognitoId } = req.params;
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        cognitoId: cognitoId,
+      },
+    });
+    res.json(user);
+  } catch (error: any) {
+    res.status(500).json({ message: `Error retriving user: ${error.message}` });
+  }
+};
+
+// postUser
 export const postUser = async (req: Request, res: Response) => {
   try {
     const {
