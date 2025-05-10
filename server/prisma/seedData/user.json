@@ -118,5 +118,11 @@
     "teamId": 5,
     "profilePictureUrl": "p7.jpeg",
     "cognitoId": "123e4567-e89b-12d3-a456-426614174020"
+  },
+  {
+    "username": "kamil",
+    "teamId": 1,
+    "profilePictureUrl": "p3.jpeg",
+    "cognitoId": "c0acb97c-f001-70a5-1773-f9638f6f593b"
   }
 ]
