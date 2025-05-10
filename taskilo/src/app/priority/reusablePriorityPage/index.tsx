@@ -91,17 +91,18 @@ const ReusablePriorityPage = ({ priority }: Props) => {
 
 
   //added test
-  const { data: currentUser, isLoading: userLoading } = useGetAuthUserQuery({});
-
+  const { data: currentUser } = useGetAuthUserQuery({});
   const userId = currentUser?.userDetails?.userId;
+  const skipQuery = typeof userId !== "number";
 
   const {
     data: tasks,
-    isLoading: tasksLoading,
+    isLoading,
     isError: isTasksError,
   } = useGetTasksByUserQuery(userId ?? 0, {
-    skip: userId === undefined,
+    skip: skipQuery,
   });
+
 
 
 
@@ -118,8 +119,9 @@ const ReusablePriorityPage = ({ priority }: Props) => {
 
 
   //added test
-  if (userLoading || tasksLoading) return <div>Loading tasks...</div>;
+  if (skipQuery || isLoading) return <div>Loading tasks...</div>;
   if (isTasksError || !tasks) return <div>Error fetching tasks</div>;
+
 
 
   return (
