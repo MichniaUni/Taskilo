@@ -272,7 +272,10 @@ export const api = createApi({
     //     body: comment,
     //   }),
     // }),
-    createComment: build.mutation<Comment, Pick<Comment, "text" | "taskId">>({
+    createComment: build.mutation<
+      Comment,
+      Pick<Comment, "text" | "taskId" | "userId">
+    >({
       query: (comment) => ({
         url: `comments`,
         method: "POST",
