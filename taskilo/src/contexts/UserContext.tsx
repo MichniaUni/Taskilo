@@ -14,7 +14,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       try {
         const cognitoUser = await getCurrentUser(); // Changed this line
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/users/${cognitoUser.userId}` // Changed to userId
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${cognitoUser.userId}` // Changed to userId
         );
         setUser(response.data);
       } catch (error) {
