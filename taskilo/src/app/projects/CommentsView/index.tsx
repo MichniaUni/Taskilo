@@ -57,7 +57,6 @@ const CommentsView = ({ id, setIsModelNewTaskOpen }: Props) => {
         await createComment({
           text: newComment,
           taskId: selectedTaskId,
-          userId: 1,//added 1 taken out
         }).unwrap();
         await refetchTasks();
       }
