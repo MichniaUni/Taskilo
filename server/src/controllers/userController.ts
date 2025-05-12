@@ -16,17 +16,37 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
 };
 
 // Get User
+// export const getUser = async (req: Request, res: Response): Promise<void> => {
+//   const { cognitoId } = req.params;
+//   try {
+//     const user = await prisma.user.findUnique({
+//       where: {
+//         cognitoId: cognitoId,
+//       },
+//     });
+//     res.json(user);
+//   } catch (error: any) {
+//     res.status(500).json({ message: `Error retriving user: ${error.message}` });
+//   }
+// };
+
 export const getUser = async (req: Request, res: Response): Promise<void> => {
   const { cognitoId } = req.params;
   try {
     const user = await prisma.user.findUnique({
-      where: {
-        cognitoId: cognitoId,
-      },
+      where: { cognitoId },
     });
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" }); // ✅ return 404
+      return;
+    }
+
     res.json(user);
   } catch (error: any) {
-    res.status(500).json({ message: `Error retriving user: ${error.message}` });
+    res
+      .status(500)
+      .json({ message: `Error retrieving user: ${error.message}` });
   }
 };
 
