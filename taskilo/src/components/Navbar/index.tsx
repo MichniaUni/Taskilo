@@ -68,17 +68,13 @@ const Navbar = () => {
             <div className="ml-2 mr-5 hidden min-h-[2em] w-[0.1rem] bg-gray-200 md:inline-block"></div>
             <div className="hidden items-center justify-between md:flex">
             <div className="align-center flex h-9 w-9 justify-center">
-                {!!currentUserDetails?.profilePictureUrl ? (
                 <Image
-                    src={`/${currentUserDetails?.profilePictureUrl || "default.jpg"}`}
+                    src="/p1.jpeg"
                     alt={currentUserDetails?.username || "User Profile Picture"}
                     width={100}
                     height={50}
                     className="h-full rounded-full object-cover"
                 />
-                ) : (
-                <User className="h-6 w-6 cursor-pointer self-center rounded-full dark:text-white" />
-                )}
             </div>
             <span className="mx-3 text-gray-800 dark:text-white">
                 {currentUserDetails?.username}
