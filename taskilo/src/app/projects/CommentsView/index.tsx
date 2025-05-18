@@ -6,7 +6,6 @@ import {
   useCreateCommentMutation,
   useDeleteCommentMutation,
   useUpdateCommentMutation,
-  useGetAuthUserQuery,
 } from "@/state/api";
 import { MessageSquareMore } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -28,15 +27,6 @@ const CommentsView = ({ id, setIsModelNewTaskOpen }: Props) => {
   const [deleteComment] = useDeleteCommentMutation();
   const [updateComment] = useUpdateCommentMutation();
 
-  const { data: currentUser } = useGetAuthUserQuery({});
-  if (!currentUser) return null;
-
-  const userId = currentUser?.userDetails?.userId;
-  if (userId === undefined) {
-    console.error("User ID is undefined");
-    return null;
-  }
-
   const { data: comments = [] } = useGetCommentsByTaskQuery(selectedTaskId!, {
     skip: selectedTaskId === null,
   });
@@ -54,7 +44,7 @@ const CommentsView = ({ id, setIsModelNewTaskOpen }: Props) => {
         await createComment({
           text: newComment,
           taskId: selectedTaskId,
-          userId: userId,
+          userId: 1, // Hardcoded userId
         }).unwrap();
         await refetchTasks();
       }
