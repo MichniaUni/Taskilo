@@ -25,7 +25,11 @@ const Sidebar = () => {
         transition-all duration-300 h-full z-40 dark:bg-black overflow-y-auto bg-white 
         ${isSidebarCollapsed ? "w-0 hidden" : "w-64"}`;
     
-    const { data: currentUser } = useGetAuthUserQuery({});
+    // const { data: currentUser } = useGetAuthUserQuery({});
+    const { data: currentUser } = useGetAuthUserQuery({}, {
+    refetchOnMountOrArgChange: true,
+    });
+
     
         const handleSignOut = async () => {
             try {

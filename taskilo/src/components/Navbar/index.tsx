@@ -105,7 +105,11 @@ const Navbar = () => {
     const dispatch = useAppDispatch();
     const isSidebarCollapsed = useAppSelector((state) => state.global.isSidebarCollapsed);
     const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
-    const { data: currentUser } = useGetAuthUserQuery({});
+    // const { data: currentUser } = useGetAuthUserQuery({});
+    const { data: currentUser } = useGetAuthUserQuery({}, {
+    refetchOnMountOrArgChange: true,
+    });
+
 
     const handleSignOut = async () => {
         try {
