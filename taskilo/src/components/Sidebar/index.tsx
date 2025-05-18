@@ -69,7 +69,7 @@ const Sidebar = () => {
                     </h3>
                     <div className="mt-1 flex items-start gap-2">
                         <LockIcon className="mt-[0.1rem] h-3 w-3 text-gray-500 dark:text-gray-400" />
-                        <p className="text-xs text-gray-500">Kamil_M</p>
+                        <p className="text-xs text-gray-500">{currentUserDetails?.username || 'Guest'}</p>
                     </div>
                 </div>
             </div>
