@@ -132,7 +132,8 @@ const Sidebar = () => {
             <div className="flex w-full items-center">
                 <div className="align-center flex h-9 w-9 justify-center">
                     <Image
-                        src="/p10.jpeg"
+                        // src="/p10.jpeg"
+                        src={`/${currentUserDetails?.profilePictureUrl || "p10.jpeg"}`}
                         alt={currentUserDetails?.username || "User Profile Picture"}
                         width={100}
                         height={50}
