@@ -28,17 +28,14 @@ const CommentsView = ({ id, setIsModelNewTaskOpen }: Props) => {
   const [deleteComment] = useDeleteCommentMutation();
   const [updateComment] = useUpdateCommentMutation();
 
-  // const { data: currentUser } = useGetAuthUserQuery({});//added
-  // if (!currentUser) return null;//added
+  const { data: currentUser } = useGetAuthUserQuery({});
+  if (!currentUser) return null;
 
-  // const userId = currentUser?.userDetails?.userId;//added
-
-  // if (userId === undefined) {
-  //   console.error("User ID is undefined"); //added
-  //   return;
-  // }
-
-  // const currentUserDetails = currentUser?.userDetails;//added
+  const userId = currentUser?.userDetails?.userId;
+  if (userId === undefined) {
+    console.error("User ID is undefined");
+    return null;
+  }
 
   const { data: comments = [] } = useGetCommentsByTaskQuery(selectedTaskId!, {
     skip: selectedTaskId === null,
@@ -57,7 +54,7 @@ const CommentsView = ({ id, setIsModelNewTaskOpen }: Props) => {
         await createComment({
           text: newComment,
           taskId: selectedTaskId,
-          userId: 1,//added 1 taken out
+          userId: userId,
         }).unwrap();
         await refetchTasks();
       }
