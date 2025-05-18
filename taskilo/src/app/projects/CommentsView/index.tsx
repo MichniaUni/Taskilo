@@ -151,20 +151,22 @@ const CommentsView = ({ id, setIsModelNewTaskOpen }: Props) => {
                               </div>
                               <div>{comment.text}</div>
                             </div>
-                            <div className="flex items-start gap-1 pt-1">
-                              <button
-                                onClick={() => handleEditComment(comment)}
-                                className="rounded bg-gray-100 px-2 py-1 text-xs hover:bg-gray-200 dark:bg-dark-tertiary dark:hover:bg-dark-hover dark:text-white"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                onClick={() => handleDeleteComment(comment.id)}
-                                className="rounded bg-red-100 px-2 py-1 text-xs text-red-700 hover:bg-red-200 dark:bg-red-900 dark:text-red-300"
-                              >
-                                Delete
-                              </button>
-                            </div>
+                            {comment.userId === userId && (
+                              <div className="flex items-start gap-1 pt-1">
+                                <button
+                                  onClick={() => handleEditComment(comment)}
+                                  className="rounded bg-gray-100 px-2 py-1 text-xs hover:bg-gray-200 dark:bg-dark-tertiary dark:hover:bg-dark-hover dark:text-white"
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteComment(comment.id)}
+                                  className="rounded bg-red-100 px-2 py-1 text-xs text-red-700 hover:bg-red-200 dark:bg-red-900 dark:text-red-300"
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            )}
                           </li>
                         ))}
                       </ul>
