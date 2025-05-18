@@ -43,11 +43,8 @@ const Sidebar = () => {
     <div className={sidebarClassName}>
         <div className="flex h-[100%] w-full flex-col justify-start">
             {/* Top Logo */}
-            {/* <div className="z-50 flex min-h-[56px] w-64 items-center justify-between bg-white px-6 pt-3 dark:bg-black"> */}
             <div className="relative z-50 flex min-h-[100px] w-64 items-center justify-center bg-white px-6 pt-3 dark:bg-black">
-                
                 <div className="text-xl font-bold text-gray-800 dark:text-white">
-                    {/* TASKILO */}
                     <Image src="/XDZT.gif" alt="Logo" width={60} height={60} unoptimized priority/>
                 </div>
                 {isSidebarCollapsed ? null : (
@@ -55,7 +52,6 @@ const Sidebar = () => {
                     aria-label="Close Sidebar"
                     >
                         <X className="h-6 w-6 text-gray-400 hover:text-gray-800 dark:text-white"/>
-
                     </button>
                 )}
             </div>
@@ -130,37 +126,30 @@ const Sidebar = () => {
                 </>
             )}
         </div>
-        <div className="z-10 mt-32 flex w-full flex-col items-center gap-4 bg-white px-8 py-4 dark:bg-black md:hidden">
-        <div className="flex w-full items-center">
-          <div className="align-center flex h-9 w-9 justify-center">
-            {!!currentUserDetails?.profilePictureUrl ? (
-              <Image
-                src={`/${currentUserDetails?.profilePictureUrl || "default.jpg"}`}
-                alt={currentUserDetails?.username || "User Profile Picture"}
-                width={100}
-                height={50}
-                className="h-full rounded-full object-cover"
-              />
-            ) : (
-              <User className="h-6 w-6 cursor-pointer self-center rounded-full dark:text-white" />
-            )}
-          </div>
-          <span className="mx-3 text-gray-800 dark:text-white">
-            {currentUserDetails?.username}
-          </span>
-          <button
-            className="self-start rounded bg-blue-400 px-4 py-2 text-xs font-bold text-white hover:bg-blue-500 md:block"
-            onClick={handleSignOut}
-          >
-            Sign out
-          </button>
+        
+        {/* Mobile profile section */}
+        <div className="fixed bottom-0 z-10 w-64 border-t border-gray-200 bg-white px-8 py-4 dark:border-gray-700 dark:bg-black md:hidden">
+            <div className="flex w-full items-center">
+                <div className="align-center flex h-9 w-9 justify-center">
+                    <Image
+                        src="/p2.jpeg"
+                        alt={currentUserDetails?.username || "User Profile Picture"}
+                        width={100}
+                        height={50}
+                        className="h-full rounded-full object-cover"
+                    />
+                </div>
+                <span className="mx-3 text-gray-800 dark:text-white">
+                    {currentUserDetails?.username}
+                </span>
+                <button
+                    className="self-start rounded bg-blue-400 px-4 py-2 text-xs font-bold text-white hover:bg-blue-500"
+                    onClick={handleSignOut}
+                >
+                    Sign out
+                </button>
+            </div>
         </div>
-      </div>
-
-
-
-
-
     </div>
   )
 }
