@@ -6,6 +6,7 @@ import {
   useCreateCommentMutation,
   useDeleteCommentMutation,
   useUpdateCommentMutation,
+  useGetAuthUserQuery,
 } from "@/state/api";
 import { MessageSquareMore } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -26,10 +27,21 @@ const CommentsView = ({ id, setIsModelNewTaskOpen }: Props) => {
   const [createComment] = useCreateCommentMutation();
   const [deleteComment] = useDeleteCommentMutation();
   const [updateComment] = useUpdateCommentMutation();
+  const { data: currentUser, isLoading: isLoadingUser } = useGetAuthUserQuery({});
 
-  const { data: comments = [] } = useGetCommentsByTaskQuery(selectedTaskId!, {
+  const { data: comments = [] } = useGetCommentsByTaskQuery(selectedTaskId ?? 0, {
     skip: selectedTaskId === null,
   });
+
+  if (isLoadingUser) {
+    return <div className="p-4">Loading user data...</div>;
+  }
+
+  if (!currentUser?.userDetails?.userId) {
+    return <div className="p-4">Please sign in to view and add comments.</div>;
+  }
+
+  const userId = currentUser.userDetails.userId as number;
 
   const handleCreateOrUpdateComment = async () => {
     if (!newComment || !selectedTaskId) return;
@@ -44,7 +56,7 @@ const CommentsView = ({ id, setIsModelNewTaskOpen }: Props) => {
         await createComment({
           text: newComment,
           taskId: selectedTaskId,
-          userId: 1, // Hardcoded userId
+          userId: userId,
         }).unwrap();
         await refetchTasks();
       }
