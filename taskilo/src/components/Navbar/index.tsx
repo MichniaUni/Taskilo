@@ -177,7 +177,7 @@ const Navbar = () => {
                 ) : (
                     <User className="h-6 w-6 cursor-pointer self-center rounded-full dark:text-white" />
                 )}
-                </div>
+            </div>
             <span className="mx-3 text-gray-800 dark:text-white">
                 {currentUserDetails?.username}
             </span>
