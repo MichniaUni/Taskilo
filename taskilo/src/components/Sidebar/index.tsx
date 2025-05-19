@@ -5,6 +5,7 @@ import { setisSidebarCollapsed } from '@/state';
 import { useGetAuthUserQuery, useGetProjectsQuery, useDeleteProjectMutation } from '@/state/api';
 import { signOut } from 'aws-amplify/auth';
 import { AlertCircle, AlertOctagon, AlertTriangle, Briefcase, ChevronDown, ChevronUp, Home, Icon, Layers3, LockIcon, LucideIcon, Search, Settings, ShieldAlert, TimerReset, User, UserRoundSearch, Users, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -17,6 +18,8 @@ const Sidebar = () => {
 
     const { data: projects } = useGetProjectsQuery();
     const [deleteProject] = useDeleteProjectMutation();
+    const pathname = usePathname();
+    const router = useRouter();
 
     const dispatch = useAppDispatch();
     const isSidebarCollapsed = useAppSelector((state) => state.global.isSidebarCollapsed);
@@ -122,16 +125,21 @@ const Sidebar = () => {
                 </Link>
                 <button
                     onClick={async (e) => {
-                    e.stopPropagation(); // avoid triggering link
-                    const confirmed = confirm(`Delete project "${project.name}"?`);
-                    if (confirmed) {
-                        try {
-                        await deleteProject(project.id).unwrap();
-                        } catch (err) {
-                        console.error("Failed to delete project:", err);
+                        e.stopPropagation(); // avoid triggering link
+                        const confirmed = confirm(`Delete project "${project.name}"?`);
+                        if (confirmed) {
+                            try {
+                            await deleteProject(project.id).unwrap();
+
+                            // Navigate to home if user was on the deleted project's page
+                            if (pathname === `/projects/${project.id}`) {
+                                router.push("/");
+                            }
+                            } catch (err) {
+                            console.error("Failed to delete project:", err);
+                            }
                         }
-                    }
-                    }}
+                        }}
                     className="text-gray-400 hover:text-red-500 transition-opacity group-hover:opacity-100 opacity-0"
                     title="Delete project"
                 >
