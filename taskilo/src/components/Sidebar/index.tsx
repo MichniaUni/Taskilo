@@ -2,7 +2,7 @@
 
 import { useAppDispatch, useAppSelector } from '@/app/redux';
 import { setisSidebarCollapsed } from '@/state';
-import { useGetAuthUserQuery, useGetProjectsQuery } from '@/state/api';
+import { useGetAuthUserQuery, useGetProjectsQuery, useDeleteProjectMutation } from '@/state/api';
 import { signOut } from 'aws-amplify/auth';
 import { AlertCircle, AlertOctagon, AlertTriangle, Briefcase, ChevronDown, ChevronUp, Home, Icon, Layers3, LockIcon, LucideIcon, Search, Settings, ShieldAlert, TimerReset, User, UserRoundSearch, Users, X } from 'lucide-react';
 import Image from 'next/image';
@@ -16,6 +16,7 @@ const Sidebar = () => {
     const [showPriority, setShowPriority] = useState(true);
 
     const { data: projects } = useGetProjectsQuery();
+    const [deleteProject] = useDeleteProjectMutation();
 
     const dispatch = useAppDispatch();
     const isSidebarCollapsed = useAppSelector((state) => state.global.isSidebarCollapsed);
@@ -95,7 +96,7 @@ const Sidebar = () => {
             </button>
 
             {/* Project List */}
-            {showProjects &&
+            {/* {showProjects &&
                 projects?.map((project) => (
                     <SidebarLink
                     key={project.id}
@@ -103,6 +104,40 @@ const Sidebar = () => {
                     label={project.name}
                     href={`/projects/${project.id}`}
                     />
+            ))} */}
+            {showProjects &&
+            projects?.map((project) => (
+                <div
+                key={project.id}
+                className="group relative flex items-center justify-between gap-2 px-8 py-3 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                <Link
+                    href={`/projects/${project.id}`}
+                    className="flex items-center gap-3 overflow-hidden"
+                >
+                    <Briefcase className="h-5 w-5 text-gray-800 dark:text-gray-100" />
+                    <span className="truncate font-medium text-gray-800 dark:text-gray-100">
+                    {project.name}
+                    </span>
+                </Link>
+                <button
+                    onClick={async (e) => {
+                    e.stopPropagation(); // avoid triggering link
+                    const confirmed = confirm(`Delete project "${project.name}"?`);
+                    if (confirmed) {
+                        try {
+                        await deleteProject(project.id).unwrap();
+                        } catch (err) {
+                        console.error("Failed to delete project:", err);
+                        }
+                    }
+                    }}
+                    className="text-gray-400 hover:text-red-500 transition-opacity group-hover:opacity-100 opacity-0"
+                    title="Delete project"
+                >
+                    <X className="h-4 w-4" />
+                </button>
+                </div>
             ))}
 
 
