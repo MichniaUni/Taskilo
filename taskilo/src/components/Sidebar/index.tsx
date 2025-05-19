@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '@/app/redux';
 import { setisSidebarCollapsed } from '@/state';
 import { useGetAuthUserQuery, useGetProjectsQuery, useDeleteProjectMutation } from '@/state/api';
 import { signOut } from 'aws-amplify/auth';
-import { AlertCircle, AlertOctagon, AlertTriangle, Briefcase, ChevronDown, ChevronUp, Home, Icon, Layers3, LockIcon, LucideIcon, Search, Settings, ShieldAlert, TimerReset, User, UserRoundSearch, Users, X } from 'lucide-react';
+import { AlertCircle, AlertOctagon, AlertTriangle, Briefcase, ChevronDown, ChevronUp, FileType2, Home, Icon, Layers3, LockIcon, LucideIcon, Search, Settings, ShieldAlert, TimerReset, User, UserRoundSearch, Users, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -118,7 +118,8 @@ const Sidebar = () => {
                     href={`/projects/${project.id}`}
                     className="flex items-center gap-3 overflow-hidden"
                 >
-                    <Briefcase className="h-5 w-5 text-gray-800 dark:text-gray-100" />
+                    {/* <Briefcase className="h-5 w-5 text-gray-800 dark:text-gray-100" /> */}
+                    <FileType2 className="h-5 w-5 text-gray-800 dark:text-gray-100" />
                     <span className="truncate font-medium text-gray-800 dark:text-gray-100">
                     {project.name}
                     </span>
