@@ -334,6 +334,7 @@
 import Modal from '@/components/Modal';
 import { Priority, Status, useCreateTaskMutation, useUpdateTaskMutation, Task } from '@/state/api';
 import React, { useState, useEffect } from 'react';
+import { useGetTasksQuery } from '@/state/api';
 import { formatISO } from "date-fns";
 
 type Props = {
@@ -346,6 +347,7 @@ type Props = {
 const ModalNewTask = ({ isOpen, onClose, id = null, task }: Props) => {
   const [createTask, { isLoading }] = useCreateTaskMutation();
   const [updateTask] = useUpdateTaskMutation();
+  
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -357,6 +359,11 @@ const ModalNewTask = ({ isOpen, onClose, id = null, task }: Props) => {
   const [authorUserId, setAuthorUserId] = useState("");
   const [assignedUserId, setAssignedUserId] = useState("");
   const [projectId, setProjectId] = useState("");
+
+  const { refetch: refetchTasks } = useGetTasksQuery(
+  { projectId: Number(id || projectId) },
+  { skip: !(id || projectId) }
+  );
 
   useEffect(() => {
     if (task) {
@@ -394,8 +401,10 @@ const ModalNewTask = ({ isOpen, onClose, id = null, task }: Props) => {
     try {
       if (task?.id) {
         await updateTask({ taskId: task.id, data: payload }).unwrap();
+        await refetchTasks();
       } else {
         await createTask(payload).unwrap();
+        await refetchTasks();
       }
       onClose();
     } catch (err) {
