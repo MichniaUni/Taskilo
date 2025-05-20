@@ -29,6 +29,14 @@ const Navbar = () => {
 
     const currentUserDetails = currentUser?.userDetails;
 
+      const defaultProfile = "/p13.jpeg";
+        let profileSrc = defaultProfile;
+
+        if (currentUserDetails?.profilePictureUrl) {
+            const url = currentUserDetails.profilePictureUrl.trim();
+            profileSrc = url.startsWith("http") ? url : `/${url}`;
+        }
+
 
   return (
     <div className="flex items-center justify-between bg-white px-4 py-3 dark:bg-black">
@@ -84,13 +92,15 @@ const Navbar = () => {
                     <User className="h-6 w-6 cursor-pointer self-center rounded-full dark:text-white" />
                 )} */}
 
+
+
                 <Image
-                src={`/${currentUserDetails?.profilePictureUrl || "p13.jpeg"}`}
-                alt={currentUserDetails.username || "User Profile Picture"}
-                width={100}
-                height={100}
-                className="h-full w-full rounded-full object-cover"
-                />
+                    src={profileSrc}
+                    alt={currentUserDetails.username || "User Profile Picture"}
+                    width={100}
+                    height={100}
+                    className="h-full w-full rounded-full object-cover"
+                    />
 
 
 
