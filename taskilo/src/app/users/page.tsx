@@ -18,20 +18,49 @@ const CustomToolbar = () => (
 const columns: GridColDef[] = [
     {field: "userId", headerName: "ID", width: 100},
     {field: "username", headerName: "Username", width: 250},
-    {field: "profilePictureUrl", headerName: "Profile Picture", width: 100,
-        renderCell: (params) => (
+    // {field: "profilePictureUrl", headerName: "Profile Picture", width: 100,
+    //     renderCell: (params) => (
+    //         <div className="flex h-full w-full items-center justify-center">
+    //             <div className="h-9 w-9">
+    //                 <Image
+    //                 src={`/${params.value}`}
+    //                 alt={params.row.username}
+    //                 width={100}
+    //                 height={50}
+    //                 className="h-full rounded-full object-cover"
+    //                 />
+    //             </div>
+    //         </div>        )
+    // },
+    {
+    field: "profilePictureUrl",
+    headerName: "Profile Picture",
+    width: 100,
+        renderCell: (params) => {
+            const profilePic = params.value?.trim()
+            ? `/${params.value}`
+            : "/p13.jpeg"; // fallback to default image
+
+            return (
             <div className="flex h-full w-full items-center justify-center">
                 <div className="h-9 w-9">
-                    <Image
-                    src={`/${params.value}`}
+                <Image
+                    src={profilePic}
                     alt={params.row.username}
                     width={100}
                     height={50}
                     className="h-full rounded-full object-cover"
-                    />
+                    onError={(e) => {
+                    const img = e.currentTarget;
+                    img.onerror = null;
+                    img.src = "/p13.jpeg"; // fallback on load error
+                    }}
+                />
                 </div>
-            </div>        )
-    },
+            </div>
+            );
+        },
+    }
 ]
 
 
