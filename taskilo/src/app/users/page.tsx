@@ -23,8 +23,10 @@ const columns: GridColDef[] = [
             <div className="flex h-full w-full items-center justify-center">
                 <div className="h-9 w-9">
                     <Image
-                    src={params.value ? params.value : "p13.jpeg"}
-                    alt={params.row.username}
+                    // src={`/${params.value}`}
+                    // alt={params.row.username}
+                    src={params.value ? `/${params.value}` : "/p13.jpeg"}
+                    alt={params.row.username || "User profile"}
                     width={100}
                     height={50}
                     className="h-full rounded-full object-cover"
