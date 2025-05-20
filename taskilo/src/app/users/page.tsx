@@ -37,30 +37,30 @@ const columns: GridColDef[] = [
     headerName: "Profile Picture",
     width: 100,
         renderCell: (params) => {
-            const profilePic = params.value?.trim()
-            ? `/${params.value}`
-            : "/p13.jpeg"; // fallback to default image
+            const rawValue = params?.value;
+            const hasCustomImage = !!rawValue && rawValue.trim() !== "";
+            const profileSrc = hasCustomImage ? `/${rawValue.trim()}` : "/p13.jpeg";
 
             return (
             <div className="flex h-full w-full items-center justify-center">
                 <div className="h-9 w-9">
                 <Image
-                    src={profilePic}
+                    src={profileSrc}
                     alt={params.row.username}
-                    width={100}
-                    height={50}
-                    className="h-full rounded-full object-cover"
+                    width={40}
+                    height={40}
+                    className="rounded-full object-cover"
                     onError={(e) => {
-                    const img = e.currentTarget;
-                    img.onerror = null;
-                    img.src = "/p13.jpeg"; // fallback on load error
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = "/p13.jpeg";
                     }}
                 />
                 </div>
             </div>
             );
-        },
+        }
     }
+
 ]
 
 
