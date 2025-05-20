@@ -97,18 +97,7 @@ const Sidebar = () => {
                         )}
                         
             </button>
-
-            {/* Project List */}
             {/* {showProjects &&
-                projects?.map((project) => (
-                    <SidebarLink
-                    key={project.id}
-                    icon={Briefcase}
-                    label={project.name}
-                    href={`/projects/${project.id}`}
-                    />
-            ))} */}
-            {showProjects &&
             projects?.map((project) => (
                 <div
                 key={project.id}
@@ -118,7 +107,6 @@ const Sidebar = () => {
                     href={`/projects/${project.id}`}
                     className="flex items-center gap-3 overflow-hidden"
                 >
-                    {/* <Briefcase className="h-5 w-5 text-gray-800 dark:text-gray-100" /> */}
                     <FileType2 className="h-5 w-5 text-gray-800 dark:text-gray-100" />
                     <span className="truncate font-medium text-gray-800 dark:text-gray-100">
                     {project.name}
@@ -126,13 +114,11 @@ const Sidebar = () => {
                 </Link>
                 <button
                     onClick={async (e) => {
-                        e.stopPropagation(); // avoid triggering link
+                        e.stopPropagation();
                         const confirmed = confirm(`Delete project "${project.name}"?`);
                         if (confirmed) {
                             try {
                             await deleteProject(project.id).unwrap();
-
-                            // Navigate to home if user was on the deleted project's page
                             if (pathname === `/projects/${project.id}`) {
                                 router.push("/");
                             }
@@ -147,7 +133,58 @@ const Sidebar = () => {
                     <X className="h-4 w-4" />
                 </button>
                 </div>
-            ))}
+            ))} */}
+
+            {showProjects &&
+            projects?.map((project) => {
+                const isActiveProject = pathname === `/projects/${project.id}`;
+
+                return (
+                <div
+                    key={project.id}
+                    className={`group relative flex items-center justify-between gap-2 px-8 py-3
+                    ${isActiveProject ? "bg-blue-100 dark:bg-blue-900" : "hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                >
+                    {isActiveProject && (
+                    <div className="absolute left-0 top-0 h-full w-[4px] bg-blue-500 rounded-r" />
+                    )}
+
+                    <Link
+                    href={`/projects/${project.id}`}
+                    className="flex items-center gap-3 overflow-hidden"
+                    >
+                    <FileType2 className="h-5 w-5 text-gray-800 dark:text-gray-100" />
+                    <span className={`truncate font-medium ${
+                        isActiveProject ? "text-blue-700 dark:text-blue-300" : "text-gray-800 dark:text-gray-100"
+                    }`}>
+                        {project.name}
+                    </span>
+                    </Link>
+
+                    <button
+                    onClick={async (e) => {
+                        e.stopPropagation();
+                        const confirmed = confirm(`Delete project "${project.name}"?`);
+                        if (confirmed) {
+                        try {
+                            await deleteProject(project.id).unwrap();
+                            if (pathname === `/projects/${project.id}`) {
+                            router.push("/");
+                            }
+                        } catch (err) {
+                            console.error("Failed to delete project:", err);
+                        }
+                        }
+                    }}
+                    className="text-gray-400 hover:text-red-500 transition-opacity group-hover:opacity-100 opacity-0"
+                    title="Delete project"
+                    >
+                    <X className="h-4 w-4" />
+                    </button>
+                </div>
+                );
+            })}
+
 
 
 
