@@ -29,13 +29,13 @@ const Navbar = () => {
 
     const currentUserDetails = currentUser?.userDetails;
 
-      const defaultProfile = "/p13.jpeg";
-        let profileSrc = defaultProfile;
+    //   const defaultProfile = "/p13.jpeg";
+    //     let profileSrc = defaultProfile;
 
-        if (currentUserDetails?.profilePictureUrl) {
-            const url = currentUserDetails.profilePictureUrl.trim();
-            profileSrc = url.startsWith("http") ? url : `/${url}`;
-        }
+    //     if (currentUserDetails?.profilePictureUrl) {
+    //         const url = currentUserDetails.profilePictureUrl.trim();
+    //         profileSrc = url.startsWith("http") ? url : `/${url}`;
+    //     }
 
 
   return (
@@ -80,7 +80,7 @@ const Navbar = () => {
             <div className="ml-2 mr-5 hidden min-h-[2em] w-[0.1rem] bg-gray-200 md:inline-block"></div>
             <div className="hidden items-center justify-between md:flex">
             <div className="align-center flex h-9 w-9 justify-center">
-                {/* {!!currentUserDetails?.profilePictureUrl ? (
+                {!!currentUserDetails?.profilePictureUrl ? (
                     <Image
                     src={`/${currentUserDetails?.profilePictureUrl || "p10.jpeg"}`}
                     alt={currentUserDetails.username || "User Profile Picture"}
@@ -90,17 +90,17 @@ const Navbar = () => {
                     />
                 ) : (
                     <User className="h-6 w-6 cursor-pointer self-center rounded-full dark:text-white" />
-                )} */}
+                )}
 
 
 
-                <Image
+                {/* <Image
                     src={profileSrc}
                     alt={currentUserDetails.username || "User Profile Picture"}
                     width={100}
                     height={100}
                     className="h-full w-full rounded-full object-cover"
-                    />
+                    /> */}
 
 
 
