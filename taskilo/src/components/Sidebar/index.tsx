@@ -29,7 +29,6 @@ const Sidebar = () => {
         transition-all duration-300 h-full z-40 dark:bg-black overflow-y-auto bg-white 
         ${isSidebarCollapsed ? "w-0 hidden" : "w-64"}`;
     
-    // const { data: currentUser } = useGetAuthUserQuery({});
     const { data: currentUser } = useGetAuthUserQuery({}, {
     refetchOnMountOrArgChange: true,
     });
@@ -65,7 +64,6 @@ const Sidebar = () => {
             </div>
             {/* Team */}
             <div className="flex items-center gap-5 border-y-[1.5px] border-gray-200 px-8 py-4 dark:border-gray-700">
-                {/* <Image src="/logo_bg_d.png" alt="Logo" width={40} height={40}/> */}
                 <Image src={isDarkMode ? "/logo_bg_d.png" : "/logo_bg_w.png"} alt="Logo" width={40} height={40}/>
                 <div>
                     <h3 className="text-md font-bold tracking-wide dark:text-gray-200">
@@ -97,43 +95,6 @@ const Sidebar = () => {
                         )}
                         
             </button>
-            {/* {showProjects &&
-            projects?.map((project) => (
-                <div
-                key={project.id}
-                className="group relative flex items-center justify-between gap-2 px-8 py-3 hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                <Link
-                    href={`/projects/${project.id}`}
-                    className="flex items-center gap-3 overflow-hidden"
-                >
-                    <FileType2 className="h-5 w-5 text-gray-800 dark:text-gray-100" />
-                    <span className="truncate font-medium text-gray-800 dark:text-gray-100">
-                    {project.name}
-                    </span>
-                </Link>
-                <button
-                    onClick={async (e) => {
-                        e.stopPropagation();
-                        const confirmed = confirm(`Delete project "${project.name}"?`);
-                        if (confirmed) {
-                            try {
-                            await deleteProject(project.id).unwrap();
-                            if (pathname === `/projects/${project.id}`) {
-                                router.push("/");
-                            }
-                            } catch (err) {
-                            console.error("Failed to delete project:", err);
-                            }
-                        }
-                        }}
-                    className="text-gray-400 hover:text-red-500 transition-opacity group-hover:opacity-100 opacity-0"
-                    title="Delete project"
-                >
-                    <X className="h-4 w-4" />
-                </button>
-                </div>
-            ))} */}
 
             {showProjects &&
             projects?.map((project) => {
@@ -185,10 +146,6 @@ const Sidebar = () => {
                 );
             })}
 
-
-
-
-
             {/* Priorities Links */}
 
             <button onClick={() => setShowPriority((prev) => !prev)}
@@ -213,7 +170,7 @@ const Sidebar = () => {
         </div>
         
         {/* Mobile profile section */}
-        <div className="fixed bottom-0 z-10 w-64 border-t border-gray-200 bg-white px-8 py-4 dark:border-gray-700 dark:bg-black md:hidden">
+        {/* <div className="fixed bottom-0 z-10 w-64 border-t border-gray-200 bg-white px-8 py-4 dark:border-gray-700 dark:bg-black md:hidden">
             <div className="flex w-full items-center">
                 <div className="align-center flex h-9 w-9 justify-center">
                     <Image
@@ -235,7 +192,33 @@ const Sidebar = () => {
                     Sign out
                 </button>
             </div>
+        </div> */}
+        {/* Mobile profile section */} 
+        <div className="fixed bottom-0 z-10 w-64 border-t border-gray-200 bg-white px-8 py-4 dark:border-gray-700 dark:bg-black md:hidden">
+            <div className="flex w-full items-center">
+                <div className="align-center flex h-9 w-9 justify-center">
+                    <img
+                        src={`/${currentUserDetails?.profilePictureUrl || "p13.jpeg"}`}
+                        alt={currentUserDetails?.username || "User Profile Picture"}
+                        onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = "/p13.jpeg";
+                        }}
+                        className="h-full w-full rounded-full object-cover"
+                    />
+                </div>
+                <span className="mx-3 text-gray-800 dark:text-white">
+                    {currentUserDetails?.username}
+                </span>
+                <button
+                    className="self-start rounded bg-blue-400 px-4 py-2 text-xs font-bold text-white hover:bg-blue-500"
+                    onClick={handleSignOut}
+                >
+                    Sign out
+                </button>
+            </div>
         </div>
+
     </div>
   )
 }
