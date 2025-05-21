@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Enables client-side rendering in Next.js
 
 import { useAppSelector } from "@/app/redux";
 import Header from "@/components/Header";
@@ -9,16 +9,17 @@ import {
   Priority,
   Task,
   useGetAuthUserQuery,
-//   useGetAuthUserQuery,
   useGetTasksByUserQuery,
 } from "@/state/api";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React, { useState } from "react";
 
+// Define props for the reusable component
 type Props = {
   priority: Priority;
 };
 
+// Define column definitions for the MUI DataGrid view
 const columns: GridColDef[] = [
   {
     field: "title",
@@ -74,27 +75,20 @@ const columns: GridColDef[] = [
   },
 ];
 
+// Reusable component for rendering tasks filtered by priority
 const ReusablePriorityPage = ({ priority }: Props) => {
+  // Local state to manage view mode and modal visibility
   const [view, setView] = useState("list");
   const [isModalNewTaskOpen, setIsModalNewTaskOpen] = useState(false);
 
-
-  // const { data: currentUser } = useGetAuthUserQuery({});
-  // const userId = currentUser?.userDetails?.userId ?? null;
-  // const {
-  //   data: tasks,
-  //   isLoading,
-  //   isError: isTasksError,
-  // } = useGetTasksByUserQuery( userId || 0, {
-  //   skip: userId === null,
-  // });
-
-
-  //added test
+  // Fetch current authenticated user
   const { data: currentUser } = useGetAuthUserQuery({});
   const userId = currentUser?.userDetails?.userId;
-  const skipQuery = typeof userId !== "number";
 
+  // Determine whether to skip the query if user ID is invalid
+  const skipQuery = typeof userId !== "number";
+  
+  // Fetch tasks assigned to the current user
   const {
     data: tasks,
     isLoading,
@@ -103,33 +97,25 @@ const ReusablePriorityPage = ({ priority }: Props) => {
     skip: skipQuery,
   });
 
-
-
-
-
-
-
+  // Get theme mode (dark/light) from global state
   const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
 
+  // Filter tasks by the specified priority
   const filteredTasks = tasks?.filter(
     (task: Task) => task.priority === priority,
   );
-
-  // if (isTasksError || !tasks) return <div>Error fetching tasks</div>;
-
-
-  //added test
+  // Handle loading and error states
   if (skipQuery || isLoading) return <div>Loading tasks...</div>;
   if (isTasksError || !tasks) return <div>Error fetching tasks</div>;
 
-
-
   return (
     <div className="m-5 p-4">
+      {/* Modal for creating a new task */}
       <ModalNewTask
         isOpen={isModalNewTaskOpen}
         onClose={() => setIsModalNewTaskOpen(false)}
       />
+      {/* Header with title and "Add Task" button */}
       <Header
         name="Priority Page"
         buttonComponent={
@@ -141,6 +127,7 @@ const ReusablePriorityPage = ({ priority }: Props) => {
           </button>
         }
       />
+      {/* View switcher: List or Table */}
       <div className="mb-4 flex justify-start">
         <button
           className={`px-4 py-2 ${
@@ -159,6 +146,7 @@ const ReusablePriorityPage = ({ priority }: Props) => {
           Table
         </button>
       </div>
+      {/* Render task list or table based on selected view */}
       {isLoading ? (
         <div>Loading tasks...</div>
       ) : view === "list" ? (

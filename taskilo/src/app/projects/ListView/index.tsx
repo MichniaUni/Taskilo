@@ -1,3 +1,4 @@
+// Import necessary components and hooks
 import Header from '@/components/Header';
 import TaskCard from '@/components/TaskCard';
 import { useDeleteTaskMutation, useGetTasksQuery } from '@/state/api';
@@ -6,30 +7,36 @@ import ModalNewTask from '@/components/ModalNewTask';
 import { Task } from '@/state/api';
 import React, { useState } from 'react';
 
+// Define props type for ListView component
 type Props = {
   id: string;
-  setIsModelNewTaskOpen: (isOpen: boolean) => void;
+  setIsModelNewTaskOpen: (isOpen: boolean) => void;// Function to control task creation modal
 };
 
+// ListView component displays tasks in a grid-based list layout
 const ListView = ({ id, setIsModelNewTaskOpen }: Props) => {
+  // Mutation hook to delete a task
   const [deleteTask] = useDeleteTaskMutation();
+  // Query hook to fetch tasks by project ID
   const { data: tasks, error, isLoading, refetch } = useGetTasksQuery({ projectId: Number(id) });
-
+  // Local state to manage edit modal
   const [editTaskData, setEditTaskData] = useState<Partial<Task> | undefined>();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  // Handler to delete a task with confirmation
   const handleDeleteTask = async (taskId: number) => {
     if (confirm('Are you sure you want to delete this task?')) {
       try {
         await deleteTask(taskId).unwrap();
         console.log('Task deleted');
-        refetch(); // Refresh task list after deletion
+        refetch();
       } catch (err) {
         console.error('Failed to delete task:', err);
       }
     }
   };
 
+  // Handle loading and error states
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>An error occurred while fetching tasks</div>;
 
@@ -50,6 +57,7 @@ const ListView = ({ id, setIsModelNewTaskOpen }: Props) => {
         />
       </div>
 
+      {/* Task Cards Grid */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
         {tasks?.map((task: Task) => (
           <TaskCard
@@ -63,14 +71,15 @@ const ListView = ({ id, setIsModelNewTaskOpen }: Props) => {
           />
         ))}
       </div>
-
+      
+      {/* Edit Task Modal */}
       {editTaskData && (
         <ModalNewTask
           isOpen={isEditModalOpen}
           onClose={() => {
             setIsEditModalOpen(false);
             setEditTaskData(undefined);
-            refetch(); // Optional: update list after editing
+            refetch();
           }}
           id={editTaskData.projectId!.toString()}
           task={editTaskData}

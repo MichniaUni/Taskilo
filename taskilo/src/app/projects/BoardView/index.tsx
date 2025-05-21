@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Task as TaskType } from '@/state/api';
-import DropdownMenu from '@/components/DropdownMenu'; //added
+import DropdownMenu from '@/components/DropdownMenu';
 import DropdownActionMenu from "@/components/DropdownActionMenu";
-import ModalNewTask from "@/components/ModalNewTask"; //added
-import { useDeleteTaskMutation } from "@/state/api"; //added
+import ModalNewTask from "@/components/ModalNewTask";
+import { useDeleteTaskMutation } from "@/state/api";
 
 
 
@@ -15,18 +15,21 @@ import { EllipsisVertical, MessageSquareMore, Plus } from 'lucide-react';
 import { format } from 'date-fns';
 import Image from 'next/image';
 
-// ----- Props -----
+// Props for BoardView
 type BoardProps = {
   id: string;
   setIsModelNewTaskOpen: (isOpen: boolean) => void;
 };
 
+// Define the possible task statuses (columns)
 const taskStatuse = ['To Do', 'Work In Progress', 'Under Review', 'Completed'];
 
+// Main board component using drag-and-drop with columns by task status
 const BoardView = ({ id, setIsModelNewTaskOpen }: BoardProps) => {
   const { data: tasks, isLoading, error } = useGetTasksQuery({ projectId: Number(id) });
-  const [updateTaskStatus] = useUpdateTaskStatusMutation(); //added
+  const [updateTaskStatus] = useUpdateTaskStatusMutation();
 
+  // Function to move task to a new status
   const moveTask = (taskId: number, toStatus: string) => {
     updateTaskStatus({ taskId, status: toStatus });
   };
@@ -51,7 +54,7 @@ const BoardView = ({ id, setIsModelNewTaskOpen }: BoardProps) => {
   );
 };
 
-// ----- TaskColumn -----
+//Props for each status column
 type TaskColumnProps = {
   status: string;
   tasks: TaskType[];
@@ -59,6 +62,7 @@ type TaskColumnProps = {
   setIsModalNewTaskOpen: (isOpen: boolean) => void;
 };
 
+// Component representing a single column of tasks based on status
 const TaskColumn = ({ status, tasks, moveTask, setIsModalNewTaskOpen }: TaskColumnProps) => {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'task',
@@ -82,6 +86,7 @@ const TaskColumn = ({ status, tasks, moveTask, setIsModalNewTaskOpen }: TaskColu
       }}
       className={`sl:py-4 rounded-lg py-2 xl:px-2 ${isOver ? 'bg-blue-100 dark:bg-neutral-950' : ''}`}
     >
+      {/* Column header with title and task count */}
       <div className="mb-3 flex w-full">
         <div className={`w-2 rounded-s-lg ${statusColorClass[status]}`} />
         <div className="flex w-full items-center justify-between rounded-e-lg bg-white px-5 py-4 dark:bg-dark-secondary">
@@ -100,6 +105,7 @@ const TaskColumn = ({ status, tasks, moveTask, setIsModalNewTaskOpen }: TaskColu
           </button>
         </div>
       </div>
+      {/* Render each task card in the column */}
       {tasks.filter((task) => task.status === status).map((task) => (
         <Task key={task.id} task={task} />
       ))}
@@ -107,25 +113,21 @@ const TaskColumn = ({ status, tasks, moveTask, setIsModalNewTaskOpen }: TaskColu
   );
 };
 
-// ----- Task -----
+//Props for individual task cards
 type TaskProps = {
   task: TaskType;
 };
 
+// Component representing a draggable task card
 const Task = ({ task }: TaskProps) => {
-  const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false); //added
-  const [deleteTask] = useDeleteTaskMutation();//added
-  const [editTaskData, setEditTaskData] = useState<Partial<TaskType> | undefined>(undefined);//edit
+  const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
+  const [deleteTask] = useDeleteTaskMutation();
+  const [editTaskData, setEditTaskData] = useState<Partial<TaskType> | undefined>(undefined);
 
-
-
-  // const [isDropdownOpen, setIsDropdownOpen] = React.useState(false); // added
-  // const dropdownRef = React.useRef<HTMLDivElement>(null); // added
-  //   useClickOutside(dropdownRef, () => setIsDropdownOpen(false)); // added
     
-  const [isCommentsOpen, setIsCommentsOpen] = React.useState(false); // added
-  const commentsRef = React.useRef<HTMLDivElement>(null); // added
-  useClickOutside(commentsRef, () => setIsCommentsOpen(false)); // added
+  const [isCommentsOpen, setIsCommentsOpen] = React.useState(false);
+  const commentsRef = React.useRef<HTMLDivElement>(null);
+  useClickOutside(commentsRef, () => setIsCommentsOpen(false));
   
 
 
@@ -135,11 +137,14 @@ const Task = ({ task }: TaskProps) => {
     collect: (monitor: any) => ({ isDragging: !!monitor.isDragging() })
   }));
 
+  // Split tags string into an array
   const taskTagSplit = task.tags ? task.tags.split(',') : [];
+  // Format date fields
   const formattedStartDate = task.startDate ? format(new Date(task.startDate), 'P') : '';
   const formattedDueDate = task.dueDate ? format(new Date(task.dueDate), 'P') : '';
   const numberOfComments = (task.comments && task.comments.length) || 0;
 
+  // Priority tag component with conditional styles
   const PriorityTag = ({ priority }: { priority: TaskType['priority'] }) => (
     <div
       className={`rounded-full px-2 py-1 text-xs font-semibold ${
@@ -167,6 +172,7 @@ const Task = ({ task }: TaskProps) => {
         isDragging ? 'opacity-50' : 'opacity-100'
       }`}
     >
+      {/* Show image if the task has attachments */}
       {task.attachments && task.attachments.length > 0 && (
         <Image
           src="/i2.jpg"
@@ -176,6 +182,7 @@ const Task = ({ task }: TaskProps) => {
           className="h-auto w-full rounded-t-md"
         />
       )}
+       {/* Task content */}
       <div className="p-4 md:p-6">
         <div className="flex items-start justify-between">
           <div className="flex flex-1 flex-wrap items-center gap-2">
@@ -187,12 +194,12 @@ const Task = ({ task }: TaskProps) => {
                 </div>
               ))}
           </div>
-           {/* added */}
+           {/* Dropdown action menu for edit/delete */}
            </div>
            <DropdownActionMenu
               onEdit={() => {
-                setEditTaskData(task); // this sets the form with existing task data
-                setIsCreateModalOpen(true); // opens the modal in "edit" mode
+                setEditTaskData(task);
+                setIsCreateModalOpen(true);
               }}              
               onCreate={() => setIsCreateModalOpen(true)}
               onDelete={() => {
@@ -204,37 +211,6 @@ const Task = ({ task }: TaskProps) => {
                 }
               }}
             />
-
-
-
-          {/* <div className="relative">
-            <button
-              className="flex h-6 w-4 flex-shrink-0 items-center justify-center dark:text-neutral-500"
-              aria-label="More options"
-              onClick={() => setIsDropdownOpen((prev) => !prev)}
-            >
-              <EllipsisVertical size={26} />
-            </button>
-
-            {isDropdownOpen && (
-                <div ref={dropdownRef}>
-                    <DropdownMenu
-                        onEdit={() => {
-                        setIsDropdownOpen(false);
-                        console.log('Edit task', task.id);
-                        }}
-                        onCreate={() => {
-                        setIsDropdownOpen(false);
-                        console.log('Create task');
-                        }}
-                        onDelete={() => {
-                        setIsDropdownOpen(false);
-                        console.log('Delete task', task.id);
-                        }}
-                    />
-                </div>
-            )}
-          </div> */}
           <ModalNewTask
             isOpen={isCreateModalOpen}
             onClose={() => {
@@ -244,13 +220,9 @@ const Task = ({ task }: TaskProps) => {
             id={task.projectId.toString()}
             task={editTaskData}
           />
-
-
         </div>
 
-       
-
-
+        {/* Task title and points */}    
         <div className="my-2 flex justify-between">
           <h4 className="taxt-md font-bold dark:text-white">{task.title}</h4>
           {typeof task.points === 'number' && (
@@ -258,15 +230,19 @@ const Task = ({ task }: TaskProps) => {
           )}
         </div>
 
+        {/* Start and due date */}
         <div className="text-xs text-gray-500 dark:text-neutral-500">
           {formattedStartDate && <span>{formattedStartDate} - </span>}
           {formattedDueDate && <span>{formattedDueDate}</span>}
         </div>
 
+        {/* Task description */}
         <p className="text-sm text-gray-600 dark:text-neutral-500">{task.description}</p>
-
+        
+        {/* Separator */}
         <div className="mt-4 border-t border-gray-200 dark:border-stroke-dark" />
-
+        
+        {/* Footer: assignees, author, and comments */}
         <div className="mt-3 flex items-center justify-between">
           <div className="flex -space-x-[6px] overflow-hidden">
             {task.assignee && (
@@ -291,7 +267,7 @@ const Task = ({ task }: TaskProps) => {
             )}
           </div>
 
-
+          {/* Toggle comment panel */}
           <div className="relative">
             <button
                 onClick={() => setIsCommentsOpen(prev => !prev)}
@@ -302,6 +278,7 @@ const Task = ({ task }: TaskProps) => {
                 <span className="ml-1 text-sm dark:text-neutral-400">{numberOfComments}</span>
             </button>
 
+            {/* Comment dropdown */}
             {isCommentsOpen && (
                 <div
                 ref={commentsRef}
@@ -320,11 +297,6 @@ const Task = ({ task }: TaskProps) => {
                 </div>
             )}
             </div>
-
-
-
-
-
         </div>
       </div>
     </div>

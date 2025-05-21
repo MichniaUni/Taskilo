@@ -13,27 +13,28 @@ import React, { useState } from 'react'
 
 
 const Sidebar = () => {
+    // UI toggle state for collapsible menus
     const [showProjects, setShowProjects] = useState(true);
     const [showPriority, setShowPriority] = useState(true);
-
+    // Fetch project and user data
     const { data: projects } = useGetProjectsQuery();
     const [deleteProject] = useDeleteProjectMutation();
     const pathname = usePathname();
     const router = useRouter();
-
+    // Redux state for sidebar collapse and dark mode
     const dispatch = useAppDispatch();
     const isSidebarCollapsed = useAppSelector((state) => state.global.isSidebarCollapsed);
     const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
-
+    // Sidebar container classes
     const sidebarClassName = `fixed flex flex-col h-[100%] justify-between shadow-xl 
         transition-all duration-300 h-full z-40 dark:bg-black overflow-y-auto bg-white 
         ${isSidebarCollapsed ? "w-0 hidden" : "w-64"}`;
-    
+    // Authenticated user data
     const { data: currentUser } = useGetAuthUserQuery({}, {
     refetchOnMountOrArgChange: true,
     });
 
-    
+        // Sign out handler
         const handleSignOut = async () => {
             try {
                 await signOut();
@@ -49,7 +50,7 @@ const Sidebar = () => {
   return (
     <div className={sidebarClassName}>
         <div className="flex h-[100%] w-full flex-col justify-start">
-            {/* Top Logo */}
+            {/* Logo and collapse button */}
             <div className="relative z-50 flex min-h-[100px] w-64 items-center justify-center bg-white px-6 pt-3 dark:bg-black">
                 <div className="text-xl font-bold text-gray-800 dark:text-white">
                     <Image src="/XDZT.gif" alt="Logo" width={60} height={60} unoptimized priority/>
@@ -62,7 +63,8 @@ const Sidebar = () => {
                     </button>
                 )}
             </div>
-            {/* Team */}
+
+            {/* Team and user info */}
             <div className="flex items-center gap-5 border-y-[1.5px] border-gray-200 px-8 py-4 dark:border-gray-700">
                 <Image src={isDarkMode ? "/logo_bg_d.png" : "/logo_bg_w.png"} alt="Logo" width={40} height={40}/>
                 <div>
@@ -75,7 +77,8 @@ const Sidebar = () => {
                     </div>
                 </div>
             </div>
-            {/* Navbar Links */}
+
+            {/* Static navigation links */}
             <nav className="z-10 w-full">
                 <SidebarLink icon={Home} label="Home" href="/"/>
                 <SidebarLink icon={TimerReset} label="Timeline" href="/timeline"/>
@@ -85,6 +88,7 @@ const Sidebar = () => {
                 <SidebarLink icon={Users} label="Teams" href="/teams"/>
             </nav>
             
+            {/* Collapsible Projects Section */}
             <button onClick={() => setShowProjects((prev) => !prev)}
                 className="flex w-full items-center justify-between px-8 py-3 text-gray-500">
                     <span className="">Projects</span>
@@ -92,10 +96,10 @@ const Sidebar = () => {
                             <ChevronUp className="h-5 w-5" />
                         ) : (
                             <ChevronDown className="h-5 w-5" />
-                        )}
-                        
+                        )}        
             </button>
-
+            
+            {/* List of user projects */}
             {showProjects &&
             projects?.map((project) => {
                 const isActiveProject = pathname === `/projects/${project.id}`;
@@ -106,10 +110,12 @@ const Sidebar = () => {
                     className={`group relative flex items-center justify-between gap-2 px-8 py-3
                     ${isActiveProject ? "bg-blue-100 dark:bg-blue-900" : "hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                 >
+                    {/* Active project indicator */}
                     {isActiveProject && (
                     <div className="absolute left-0 top-0 h-full w-[4px] bg-blue-500 rounded-r" />
                     )}
 
+                    {/* Project link */}
                     <Link
                     href={`/projects/${project.id}`}
                     className="flex items-center gap-3 overflow-hidden"
@@ -122,6 +128,7 @@ const Sidebar = () => {
                     </span>
                     </Link>
 
+                    {/* Delete project button */}
                     <button
                     onClick={async (e) => {
                         e.stopPropagation();
@@ -146,8 +153,7 @@ const Sidebar = () => {
                 );
             })}
 
-            {/* Priorities Links */}
-
+            {/* Collapsible Priority Section */}
             <button onClick={() => setShowPriority((prev) => !prev)}
                 className="flex w-full items-center justify-between px-8 py-3 text-gray-500">
                     <span className="">Priority</span>
@@ -156,8 +162,9 @@ const Sidebar = () => {
                         ) : (
                             <ChevronDown className="h-5 w-5" />
                         )}
-                        
             </button>
+
+            {/* Priority links */}
             {showPriority && (
                 <>
                     <SidebarLink icon={AlertCircle} label="Urgent" href="/priority/urgent"/>
@@ -168,32 +175,8 @@ const Sidebar = () => {
                 </>
             )}
         </div>
-        
-        {/* Mobile profile section */}
-        {/* <div className="fixed bottom-0 z-10 w-64 border-t border-gray-200 bg-white px-8 py-4 dark:border-gray-700 dark:bg-black md:hidden">
-            <div className="flex w-full items-center">
-                <div className="align-center flex h-9 w-9 justify-center">
-                    <Image
-                        // src="/p10.jpeg"
-                        src={`/${currentUserDetails?.profilePictureUrl || "p10.jpeg"}`}
-                        alt={currentUserDetails?.username || "User Profile Picture"}
-                        width={100}
-                        height={50}
-                        className="h-full rounded-full object-cover"
-                    />
-                </div>
-                <span className="mx-3 text-gray-800 dark:text-white">
-                    {currentUserDetails?.username}
-                </span>
-                <button
-                    className="self-start rounded bg-blue-400 px-4 py-2 text-xs font-bold text-white hover:bg-blue-500"
-                    onClick={handleSignOut}
-                >
-                    Sign out
-                </button>
-            </div>
-        </div> */}
-        {/* Mobile profile section */} 
+
+        {/* Mobile profile and sign-out section */}
         <div className="fixed bottom-0 z-10 w-64 border-t border-gray-200 bg-white px-8 py-4 dark:border-gray-700 dark:bg-black md:hidden">
             <div className="flex w-full items-center">
                 <div className="align-center flex h-9 w-9 justify-center">
@@ -218,18 +201,21 @@ const Sidebar = () => {
                 </button>
             </div>
         </div>
-
     </div>
   )
 }
 
+
+/**
+ * SidebarLink - Reusable link component used in Sidebar
+ * Highlights active route and supports icons
+ */
 interface SidebarLinkProps{
     href: string;
     icon: LucideIcon;
     label: string;
     // isCollapsed: boolean;
 }
-
 const SidebarLink = ({
     href,
     icon: Icon,
@@ -249,7 +235,6 @@ const SidebarLink = ({
                 {isActive && (
                     <div className="absolute left-0 top-0 h-[100%] w-[5px] bg-blue-400" />
                 )}
-
                 <Icon className="h-6 w-6 text-gray-800 dark:text-gray-100" />
                 <span className={`font-medium text-gray-800 dark:text-gray-100`}>
                     {label}

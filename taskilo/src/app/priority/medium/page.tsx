@@ -2,6 +2,7 @@ import React from "react";
 import ReusablePriorityPage from "../reusablePriorityPage";
 import { Priority } from "@/state/api";
 
+// Medium component for displaying tasks with "Medium" priority
 const Medium = () => {
   return <ReusablePriorityPage priority={Priority.Medium} />;
 };

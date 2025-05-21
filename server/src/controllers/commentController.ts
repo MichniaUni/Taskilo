@@ -12,7 +12,7 @@ export const getCommentsByTask = async (
   try {
     const comments = await prisma.comment.findMany({
       where: { taskId: Number(taskId) },
-      include: { user: true }, // To get info about who made the comment
+      include: { user: true },
     });
     res.json(comments);
   } catch (error: any) {

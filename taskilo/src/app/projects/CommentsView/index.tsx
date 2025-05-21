@@ -1,5 +1,6 @@
-"use client";
+"use client"; // Enables client-side rendering in Next.js
 
+// Import necessary hooks and components
 import {
   useGetTasksQuery,
   useGetCommentsByTaskQuery,
@@ -13,36 +14,45 @@ import { formatDistanceToNow } from "date-fns";
 import Header from "@/components/Header";
 import React, { useState } from "react";
 
+// Component props definition
 type Props = {
   id: string;
   setIsModelNewTaskOpen: (isOpen: boolean) => void;
 };
 
+// Main CommentsView component
 const CommentsView = ({ id, setIsModelNewTaskOpen }: Props) => {
+  // Fetch all tasks for the selected project
   const { data: tasks = [], refetch: refetchTasks } = useGetTasksQuery({ projectId: Number(id) });
+  // Local state for UI interaction
   const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
   const [selectedCommentId, setSelectedCommentId] = useState<number | null>(null);
   const [newComment, setNewComment] = useState("");
 
+  // Mutations for comment CRUD operations
   const [createComment] = useCreateCommentMutation();
   const [deleteComment] = useDeleteCommentMutation();
   const [updateComment] = useUpdateCommentMutation();
+
+  // Fetch current authenticated user
   const { data: currentUser, isLoading: isLoadingUser } = useGetAuthUserQuery({});
 
+  // Fetch comments only if a task is selected
   const { data: comments = [] } = useGetCommentsByTaskQuery(selectedTaskId ?? 0, {
     skip: selectedTaskId === null,
   });
 
+  // Handle loading and auth state
   if (isLoadingUser) {
     return <div className="p-4">Loading user data...</div>;
   }
-
   if (!currentUser?.userDetails?.userId) {
     return <div className="p-4">Please sign in to view and add comments.</div>;
   }
 
   const userId = currentUser.userDetails.userId as number;
 
+  // Submit new comment or update existing one
   const handleCreateOrUpdateComment = async () => {
     if (!newComment || !selectedTaskId) return;
 
@@ -68,11 +78,13 @@ const CommentsView = ({ id, setIsModelNewTaskOpen }: Props) => {
     }
   };
 
+  // Populate form for editing a comment
   const handleEditComment = (comment: any) => {
     setNewComment(comment.text);
     setSelectedCommentId(comment.id);
   };
 
+  // Delete a comment
   const handleDeleteComment = async (commentId: number) => {
     if (confirm("Are you sure you want to delete this comment?")) {
       try {
@@ -89,9 +101,7 @@ const CommentsView = ({ id, setIsModelNewTaskOpen }: Props) => {
       <div className="pt-5">
         <Header name="Comments" isSmallText />
       </div>
-
       <div className="mt-4 flex h-[calc(100vh-300px)] w-full flex-col gap-4 xl:flex-row">
-        {/* Task List */}
         <div className="w-full xl:w-1/3">
           <div className="rounded-md bg-white p-4 shadow dark:bg-dark-secondary">
             <h2 className="mb-3 text-lg font-semibold dark:text-white">Tasks</h2>
@@ -119,7 +129,7 @@ const CommentsView = ({ id, setIsModelNewTaskOpen }: Props) => {
           </div>
         </div>
 
-        {/* Comment Section */}
+        {/* Comments Panel Section */}
         <div className="w-full xl:w-2/3">
           <div className="flex h-full flex-col rounded-md bg-white p-4 shadow dark:bg-dark-secondary">
             {selectedTaskId ? (
@@ -128,7 +138,10 @@ const CommentsView = ({ id, setIsModelNewTaskOpen }: Props) => {
                   Comments for Task #{selectedTaskId}
                 </h2>
 
+                {/* Comment list and form */}
                 <div className="flex-1 flex flex-col overflow-hidden">
+
+                  {/* Existing comments */}
                   <div className="flex-1 overflow-y-auto pr-1">
                     {comments.length > 0 ? (
                       <ul className="space-y-2">
@@ -151,6 +164,8 @@ const CommentsView = ({ id, setIsModelNewTaskOpen }: Props) => {
                               </div>
                               <div>{comment.text}</div>
                             </div>
+
+                            {/* Edit/Delete actions (if user is comment author) */}
                             {comment.userId === userId && (
                               <div className="flex items-start gap-1 pt-1">
                                 <button
@@ -174,7 +189,8 @@ const CommentsView = ({ id, setIsModelNewTaskOpen }: Props) => {
                       <p className="text-sm text-gray-500 dark:text-neutral-500">No comments yet.</p>
                     )}
                   </div>
-
+                  
+                  {/* Comment input form */}
                   <form
                     className="mt-4 flex gap-2"
                     onSubmit={(e) => {
@@ -200,6 +216,7 @@ const CommentsView = ({ id, setIsModelNewTaskOpen }: Props) => {
                 </div>
               </>
             ) : (
+              // Show message when no task is selected
               <p className="mt-4 text-sm text-gray-500 dark:text-neutral-500">
                 Select a task to view or add comments.
               </p>

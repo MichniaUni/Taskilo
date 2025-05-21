@@ -1,7 +1,9 @@
 import type { Config } from "tailwindcss";
 
+// Define the Tailwind configuration object
 const config: Config = {
   darkMode: "class",
+  // Specify the paths to all of the template files in your project
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -9,6 +11,7 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      // Extend the default Tailwind color palette
       colors:{
         white: "#ffffff",
         gray:{
@@ -30,6 +33,7 @@ const config: Config = {
         "blue-primary": "#0275ff",
         "stroke-dark": "#2d3135",
       },
+      // Add custom background images using gradients
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":

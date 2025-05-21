@@ -1,3 +1,4 @@
+// Import dependencies
 import { useAppSelector } from '@/app/redux';
 import Header from '@/components/Header';
 import { dataGridClassNames, dataGridSxStyles } from '@/lib/utils';
@@ -6,11 +7,13 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { format } from 'date-fns';
 import React from 'react'
 
+// Props definition for TableView component
 type Props = {
     id: string;
     setIsModelNewTaskOpen: (isOpen: boolean) => void;
 }
 
+// Define column configuration for DataGrid
 const columns: GridColDef[] = [
     {
         field: "title",
@@ -70,10 +73,14 @@ const columns: GridColDef[] = [
     },
 ]
 
+// Component to render project tasks in a table format using MUI DataGrid
 const TableView = ({ id, setIsModelNewTaskOpen }: Props) => {
+    // Get current theme mode from global state
     const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
+    // Fetch tasks for the specified project
     const { data: tasks, error, isLoading } = useGetTasksQuery({ projectId: Number(id) });
 
+    // Handle loading and error states
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>An error occurred while fetching tasks</div>;
 
@@ -91,6 +98,7 @@ const TableView = ({ id, setIsModelNewTaskOpen }: Props) => {
                 }
                 isSmallText            
             />
+            {/* Render the task list as a DataGrid */}
             <DataGrid
                 rows={tasks || []}
                 columns={columns}

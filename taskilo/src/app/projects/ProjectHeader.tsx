@@ -1,14 +1,18 @@
+// Import components and icons
 import Header from '@/components/Header';
 import { Clock, Filter, Grid3X3, List, MessageSquareMore, PlusSquare, Share2, Table } from 'lucide-react';
 import React, { useState } from 'react'
 import ModalNewProject from "./ModalNewProject";
 
+// Define props for the ProjectHeader component
 type Props = {
   activeTab: string;
   setActiveTab: (tabName: string) => void;
 };
 
+// Main component for displaying the project header with tabs and actions
 const ProjectHeader = ({activeTab, setActiveTab}: Props) => {
+  // Local state to control visibility of the "New Project" modal
   const[isModalNewProjectOpen, setIsModalnewProjectOpen] = useState(false);
 
   return (
@@ -18,6 +22,7 @@ const ProjectHeader = ({activeTab, setActiveTab}: Props) => {
         onClose={() => setIsModalnewProjectOpen(false)}
       />
 
+      {/* Header with title and "New Boards" button */}
       <div className="pb-6 pt-6 lg:pb-4 lg:pt-6">
         <Header name="Product Design Development"
           buttonComponent={
@@ -31,8 +36,10 @@ const ProjectHeader = ({activeTab, setActiveTab}: Props) => {
           }/>
       </div>
 
-      {/* Tabs */}
+      {/* Navigation tabs and utilities */}
       <div className="flex flex-wrap-reverse gap-2 border-y border-gray-200 pb-[8px] pt-2 dark:border-stroke-dark  md:items-center">
+
+        {/* View mode tabs (Board, List, etc.) */}
         <div className="flex flex-1 items-center gap-2 md:gap-4">
           <TabButton
           name = "Board"
@@ -64,8 +71,9 @@ const ProjectHeader = ({activeTab, setActiveTab}: Props) => {
             setActiveTab={setActiveTab}
             activeTab={activeTab}
           />
-
         </div>
+
+        {/* Right-side actions: Filter, Share, Search */}
         <div className="flex item-center gap-2">
           <button 
             aria-label="Filter"
@@ -88,13 +96,13 @@ const ProjectHeader = ({activeTab, setActiveTab}: Props) => {
   )
 }
 
+// Tab button component used for navigation
 type TabButtonProps = {
   name: string;
   icon: React.ReactNode;
   setActiveTab: (tabName: string) => void;
   activeTab: string;
 }
-
 const TabButton = ({ name, icon, setActiveTab, activeTab }: TabButtonProps) => {
   const isActive = activeTab === name;
 

@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Enables client-side rendering in Next.js (App Router)
 
 import {
   Priority,
@@ -26,6 +26,7 @@ import {
 } from "recharts";
 import { dataGridClassNames, dataGridSxStyles } from "@/lib/utils";
 
+// Define columns for the task DataGrid
 const taskColumns: GridColDef[] = [
   { field: "title", headerName: "Title", width: 200 },
   { field: "status", headerName: "Status", width: 150 },
@@ -33,9 +34,12 @@ const taskColumns: GridColDef[] = [
   { field: "dueDate", headerName: "Due Date", width: 150 },
 ];
 
+// Colors used for pie chart cells
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
+// Main HomePage component
 const HomePage = () => {
+  // Fetch tasks and projects using RTK Query
   const {
     data: tasks,
     isLoading: tasksLoading,
@@ -44,11 +48,14 @@ const HomePage = () => {
   const { data: projects, isLoading: isProjectsLoading } =
     useGetProjectsQuery();
 
+  // Get dark mode state from global store
   const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
 
+   // Handle loading and error states
   if (tasksLoading || isProjectsLoading) return <div>Loading..</div>;
   if (tasksError || !tasks || !projects) return <div>Error fetching data</div>;
 
+  // Count tasks by priority
   const priorityCount = tasks.reduce(
     (acc: Record<string, number>, task: Task) => {
       const { priority } = task;
@@ -58,11 +65,13 @@ const HomePage = () => {
     {},
   );
 
+  // Transform priority count into a format usable by charts
   const taskDistribution = Object.keys(priorityCount).map((key) => ({
     name: key,
     count: priorityCount[key],
   }));
 
+  // Count projects by status (Completed or Active)
   const statusCount = projects.reduce(
     (acc: Record<string, number>, project: Project) => {
       const status = project.endDate ? "Completed" : "Active";
@@ -72,11 +81,13 @@ const HomePage = () => {
     {},
   );
 
+  // Transform project status data for chart use
   const projectStatus = Object.keys(statusCount).map((key) => ({
     name: key,
     count: statusCount[key],
   }));
 
+   // Define chart colors based on theme mode
   const chartColors = isDarkMode
     ? {
         bar: "#8884d8",
@@ -95,6 +106,7 @@ const HomePage = () => {
     <div className="container h-full w-[100%] bg-gray-100 bg-transparent p-8">
       <Header name="Project Management Dashboard" />
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        {/* Bar chart showing task priority distribution */}
         <div className="rounded-lg bg-white p-4 shadow dark:bg-dark-secondary">
           <h3 className="mb-4 text-lg font-semibold dark:text-white">
             Task Priority Distribution
@@ -118,6 +130,7 @@ const HomePage = () => {
             </BarChart>
           </ResponsiveContainer>
         </div>
+        {/* Pie chart showing project status */}
         <div className="rounded-lg bg-white p-4 shadow dark:bg-dark-secondary">
           <h3 className="mb-4 text-lg font-semibold dark:text-white">
             Project Status
@@ -137,6 +150,7 @@ const HomePage = () => {
             </PieChart>
           </ResponsiveContainer>
         </div>
+        {/* Task DataGrid */}
         <div className="rounded-lg bg-white p-4 shadow dark:bg-dark-secondary md:col-span-2">
           <h3 className="mb-4 text-lg font-semibold dark:text-white">
             Your Tasks

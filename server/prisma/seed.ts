@@ -1,18 +1,18 @@
-// // ✅ Step 1: Add environment check to prevent accidental seeding
+// Step 1: Add environment check to prevent accidental seeding
 if (process.env.NODE_ENV !== "development") {
   console.log("⚠️ Seeding skipped: Not in development mode");
   process.exit(0); // Stop the script
 }
 
-// ✅ Step 2: Existing imports
+// Step 2: Existing imports
 import { PrismaClient } from "@prisma/client";
 import fs from "fs";
 import path from "path";
 
-// ✅ Step 3: Create Prisma client
+// Step 3: Create Prisma client
 const prisma = new PrismaClient();
 
-// ✅ Step 4: Function to delete all existing data in each table
+// Step 4: Function to delete all existing data in each table
 async function deleteAllData(orderedFileNames: string[]) {
   const modelNames = orderedFileNames.map((fileName) => {
     const modelName = path.basename(fileName, path.extname(fileName));
@@ -30,7 +30,7 @@ async function deleteAllData(orderedFileNames: string[]) {
   }
 }
 
-// ✅ Step 5: Main seeding logic
+// Step 5: Main seeding logic
 async function main() {
   const dataDirectory = path.join(__dirname, "seedData");
 
@@ -46,10 +46,10 @@ async function main() {
     "taskAssignment.json",
   ];
 
-  // 🧹 Delete existing data first
+  // Delete existing data first
   await deleteAllData(orderedFileNames);
 
-  // 📥 Seed data from each JSON file
+  // Seed data from each JSON file
   for (const fileName of orderedFileNames) {
     const filePath = path.join(dataDirectory, fileName);
     const jsonData = JSON.parse(fs.readFileSync(filePath, "utf-8"));
@@ -67,7 +67,7 @@ async function main() {
   }
 }
 
-// ✅ Step 6: Run seeding and close the connection
+// Step 6: Run seeding and close the connection
 main()
   .catch((e) => console.error("💥 Seeding failed:", e))
   .finally(async () => await prisma.$disconnect());

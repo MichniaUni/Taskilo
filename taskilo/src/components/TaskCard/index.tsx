@@ -12,30 +12,22 @@ type Props = {
     onEdit?: () => void;
 }
 
-
-
-
 const TaskCard = ({ task, onDelete, onEdit }: Props) => {
+    // Local state to manage task modal visibility
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   return (
     <div className="relative mb-3 rounded bg-white p-4 shadow dark:bg-dark-secondary dark:text-white">
-        {/* Ellipsis menu button */}
+        {/* Dropdown menu in the top right corner */}
         <div className="absolute right-2 top-2 z-10">
-        {/* <DropdownActionMenu
-            onEdit={() => console.log("Edit task", task.id)}
-            onCreate={() => console.log("Create subtask")}
-            onDelete={() => console.log("Delete task", task.id)}
-        /> */}
             <DropdownActionMenu
              onEdit={() => onEdit?.()}
              onCreate={() => setIsCreateModalOpen(true)}
              onDelete={() => onDelete?.()}
             />
-
-
-
         </div>
+
+        {/* Display task attachment if available */}
         {task.attachments && task.attachments.length > 0 && (
             <div>
                 <strong>Attachments:</strong>
@@ -52,6 +44,8 @@ const TaskCard = ({ task, onDelete, onEdit }: Props) => {
                 </div>
             </div>
         )}
+
+        {/* Task details */}
         <p>
             <strong>ID:</strong>{task.id}
         </p>
@@ -86,14 +80,13 @@ const TaskCard = ({ task, onDelete, onEdit }: Props) => {
             <strong>Assignee:</strong>{task.assignee ? task.assignee.username : "Unassigned"}
         </p>
 
+        {/* Modal for editing the task */}
         <ModalNewTask
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         id={task.projectId.toString()}
         task={task}
         />
-
-
     </div>
   )
 }

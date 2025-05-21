@@ -1,69 +1,88 @@
+/* Tailwind base styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Ensure consistent box sizing across all elements */
 *,
 *::before,
 *::after{
   box-sizing: border-box;
 }
 
+/* Full height and width for root layout */
 html,
 body,
 #root,
 .app{
   height: 100%;
   width: 100%;
+    /* Base text size and background color */
   @apply text-sm;
   @apply bg-white;
   @apply dark:bg-black;
 }
 
-/* TIMELINE STYLING */
+/* ===========================
+   TIMELINE STYLING OVERRIDES
+   =========================== */
+
+/* Card border and rounding for top-left */
 .timeline ._3_ygE {
   @apply rounded-tl-md border border-r-0 border-[#e6e4e4] dark:border-stroke-dark;
 }
+/* Border styling for even/odd timeline rows */
 .timeline ._2eZzQ {
   @apply border-[#e6e4e4] dark:border-stroke-dark;
 }
+/* Background fill for general timeline rows */
 .timeline ._2dZTy {
   @apply fill-white dark:fill-dark-secondary;
 }
+/* Alternate row background for better readability */
 .timeline ._2dZTy:nth-child(even) {
   @apply fill-[#f5f5f5] dark:fill-dark-tertiary;
 }
+/* Stroke + fill styling for timeline connector lines */
 .timeline ._35nLX {
   @apply fill-white stroke-[#e6e4e4] dark:fill-dark-secondary dark:stroke-stroke-dark;
 }
+/* Text fill color for timeline labels */
 .timeline ._9w8d5 {
   @apply fill-[#333] dark:fill-white;
 }
+/* Card background for timeline items */
 .timeline ._34SS0 {
   @apply bg-white dark:bg-dark-secondary;
 }
+/* Alternate background for timeline rows */
 .timeline ._34SS0:nth-of-type(even) {
   @apply bg-[#f5f5f5] dark:bg-dark-tertiary;
 }
+/* Stroke color for edge lines and indicators */
 .timeline ._RuwuK,
 .timeline ._3rUKi,
 .timeline ._1rLuZ {
   @apply stroke-[#e6e4e4] dark:stroke-stroke-dark;
 }
+/* Remove left border for section separators */
 .timeline ._3ZbQT {
   @apply border-l-0 border-[#e6e4e4] dark:border-stroke-dark;
 }
+/* Timeline background in light and dark modes */
 .timeline ._3T42e {
   @apply bg-white dark:bg-dark-bg;
 }
+/* Dim text in dark mode */
 .timeline ._29NTg {
   @apply dark:text-neutral-500;
 }
-
+/* Hide scrollbars in the timeline area */
 .timeline ::-webkit-scrollbar {
   width: 0px;
   height: 0px;
 }
-
+/* Globally hide scrollbars (fallback) */
 ::-webkit-scrollbar {
   width: 0px;
   height: 0px;

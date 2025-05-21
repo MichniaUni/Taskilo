@@ -1,5 +1,6 @@
-"use client"
+"use client"; // Enable client-side rendering in Next.js
 
+// Import dependencies and styles
 import { useAppSelector } from '@/app/redux';
 import Header from '@/components/Header';
 import { useGetProjectsQuery } from '@/state/api';
@@ -7,17 +8,22 @@ import { DisplayOption, Gantt, ViewMode } from "gantt-task-react";
 import "gantt-task-react/dist/index.css";
 import React, { useMemo, useState } from 'react'
 
-
+// Define the task type for Gantt component
 type TaskTypeItems = "task" | "milestone" | "project";
 
+// Component to render all project timelines in a Gantt chart
 const Timeline = () => {
+    // Get dark mode setting from Redux state
     const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
-    const { data: projects, isLoading, isError } = useGetProjectsQuery(); 
+    // Fetch all projects using RTK Query
+    const { data: projects, isLoading, isError } = useGetProjectsQuery();
+    // Gantt chart display options (default to Month view) 
     const [displayOptions, setDisplayOptions] = useState<DisplayOption>({
         viewMode: ViewMode.Month,
         locale: "en-UK"
     });
 
+    // Convert projects to Gantt-compatible task objects
     const ganttTasks = useMemo(() => {
         return(
             projects?.map((project) => ({
@@ -32,6 +38,7 @@ const Timeline = () => {
         )
     }, [projects]);
 
+    // Handle change in Gantt view mode (Day, Week, Month)
     const handleViewModeChange = (
         event: React.ChangeEvent<HTMLSelectElement>
     ) => {
@@ -41,6 +48,7 @@ const Timeline = () => {
         }));
     }
 
+    // Loading and error states
     if (isLoading) return <div>Loading...</div>;
     if (isError || !projects) return <div>An error occurred while fetching projects</div>;
 
@@ -48,6 +56,7 @@ const Timeline = () => {
 
   return (
     <div className="max-w-full p-8">
+        {/* Header with title and view mode selector */}
         <header className="mb-4 flex items-center justify-between">
             <Header name="Projects Timeline" />
             <div className="relative inline-block w-64">
@@ -64,6 +73,8 @@ const Timeline = () => {
                 </select>
             </div>
         </header>
+
+        {/* Gantt Chart Container */}
         <div className="overflow-hidden rounded-md bg-white shadow dark:bg-dark-secondary dark:text-white">
             <div className="timeline">
                 <Gantt

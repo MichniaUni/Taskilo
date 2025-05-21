@@ -1,24 +1,32 @@
+// Import necessary modules and components
 import { useAppSelector } from '@/app/redux';
 import { useGetTasksQuery } from '@/state/api';
 import { DisplayOption, Gantt, ViewMode } from "gantt-task-react";
 import "gantt-task-react/dist/index.css";
 import React, { useMemo, useState } from 'react'
 
+// Props definition for the Timeline component
 type Props = {
     id: string;
     setIsModelNewTaskOpen: (isOpen: boolean) => void;
 }
 
+// Define allowed task types for the Gantt chart
 type TaskTypeItems = "task" | "milestone" | "project";
 
+// Main Timeline component to visualize tasks using a Gantt chart
 const Timeline = ({ id, setIsModelNewTaskOpen }: Props) => {
+    // Get theme mode from global state
     const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
+    // Fetch tasks for the selected project
     const { data: tasks, error, isLoading } = useGetTasksQuery({ projectId: Number(id) });
+    // Local state for display settings (e.g. view mode)
     const [displayOptions, setDisplayOptions] = useState<DisplayOption>({
         viewMode: ViewMode.Month,
         locale: "en-UK"
     });
 
+    // Transform fetched tasks into the format expected by the Gantt chart
     const ganttTasks = useMemo(() => {
         return(
             tasks?.map((task) => ({
@@ -33,6 +41,7 @@ const Timeline = ({ id, setIsModelNewTaskOpen }: Props) => {
         )
     }, [tasks]);
 
+    // Handler for changing the view mode (Day, Week, Month)
     const handleViewModeChange = (
         event: React.ChangeEvent<HTMLSelectElement>
     ) => {
@@ -42,10 +51,9 @@ const Timeline = ({ id, setIsModelNewTaskOpen }: Props) => {
         }));
     }
 
+    // Handle loading and error states
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>An error occurred while fetching tasks</div>;
-
-
 
   return (
     <div className="px-4 xl:px-6">
@@ -67,6 +75,8 @@ const Timeline = ({ id, setIsModelNewTaskOpen }: Props) => {
                 </select>
             </div>
         </div>
+
+        {/* Gantt Chart Display */}
         <div className="overflow-hidden rounded-md bg-white shadow dark:bg-dark-secondary dark:text-white">
             <div className="timeline">
                 <Gantt
@@ -78,6 +88,8 @@ const Timeline = ({ id, setIsModelNewTaskOpen }: Props) => {
                     barBackgroundSelectedColor={isDarkMode ? "#000000" : "#9ba1a6"}
                 />
             </div>
+
+            {/* "Add Task" Button */}
             <div className="px-4 pb-5 pt-1">
                 <button className="flex items-center rounded bg-blue-primary px-3 py-2 text-white hover:bg-blue-600"
                 onClick={() => setIsModelNewTaskOpen(true)}

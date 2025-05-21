@@ -2,6 +2,11 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
 import type { User as AppUser } from "@/state/api";
 
+// -------------------------
+// Data Models & Enums
+// -------------------------
+
+// Project model
 export interface Project {
   id: number;
   name: string;
@@ -10,6 +15,7 @@ export interface Project {
   endDate?: string;
 }
 
+// Priority options
 export enum Priority {
   Urgent = "Urgent",
   High = "High",
@@ -18,6 +24,7 @@ export enum Priority {
   Backlog = "Backlog",
 }
 
+// Task status options
 export enum Status {
   ToDo = "To Do",
   WotkInProgress = "Work In Progress",
@@ -25,6 +32,7 @@ export enum Status {
   Completed = "Completed",
 }
 
+// User model
 export interface User {
   userId?: number;
   username?: string;
@@ -34,6 +42,7 @@ export interface User {
   teamId?: number;
 }
 
+// File attachment model
 export interface Attachment {
   id: number;
   fileURL: string;
@@ -42,6 +51,7 @@ export interface Attachment {
   uploadeById: number;
 }
 
+// Task model
 export interface Task {
   id: number;
   title: string;
@@ -62,6 +72,7 @@ export interface Task {
   attachments?: Attachment[];
 }
 
+// Comment model
 export interface Comment {
   id: number;
   text: string;
@@ -71,12 +82,14 @@ export interface Comment {
   user?: User;
 }
 
+// Search results wrapper
 export interface SearchResults {
   tasks?: Task[];
   projects?: Project[];
   users?: User[];
 }
 
+// Team model
 export interface Team {
   teamId: number;
   teamName: string;
@@ -84,7 +97,13 @@ export interface Team {
   projectManagerUserId?: number;
 }
 
+// -------------------------
+// RTK Query API Setup
+// -------------------------
+
+
 export const api = createApi({
+  // Define base API URL and attach authorization header using Amplify Auth
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
     prepareHeaders: async (headers) => {
@@ -96,29 +115,16 @@ export const api = createApi({
       return headers;
     },
   }),
+
   reducerPath: "api",
   tagTypes: ["Projects", "Tasks", "Comments", "Users", "Teams"],
+
   endpoints: (build) => ({
-    // getAuthUser: build.query({
-    //   queryFn: async (_, _queryApi, _extraoptions, fetchWithBQ) => {
-    //     try {
-    //       const user = await getCurrentUser();
-    //       const session = await fetchAuthSession();
-    //       if (!session) throw new Error("No session Found");
-    //       const { userSub } = session;
-    //       const { accessToken } = session.tokens ?? {};
-
-    //       const userDetailsResponse = await fetchWithBQ(`users/${userSub}`);
-    //       const userDetails = userDetailsResponse.data as User;
-
-    //       return { data: { user, userSub, userDetails } };
-    //     } catch (error: any) {
-    //       return { error: error.message || "Could not fetch user data" };
-    //     }
-    //   },
-    // }),
-
+    // -------------------------
+    // User Management
+    // -------------------------
     getAuthUser: build.query({
+      // Custom queryFn to load the Cognito user and fetch (or create) app user profile
       queryFn: async (_, _queryApi, _extraoptions, fetchWithBQ) => {
         try {
           const user = await getCurrentUser();
@@ -128,6 +134,7 @@ export const api = createApi({
           const { userSub } = session;
           const userDetailsResponse = await fetchWithBQ(`users/${userSub}`);
 
+          // Create user if not found
           if (userDetailsResponse.data) {
             return {
               data: {
@@ -154,8 +161,6 @@ export const api = createApi({
             if (createUserResponse.error) {
               return { error: "Failed to create user" };
             }
-
-            // ⬇️ Paste this line right here
             const newUser = (createUserResponse.data as { newUser: AppUser })
               .newUser;
 
@@ -175,6 +180,10 @@ export const api = createApi({
       },
     }),
 
+
+    // -------------------------
+    // Projects
+    // -------------------------
     getProjects: build.query<Project[], void>({
       query: () => "projects",
       providesTags: ["Projects"],
@@ -205,6 +214,11 @@ export const api = createApi({
       }),
       invalidatesTags: ["Projects"],
     }),
+
+
+    // -------------------------
+    // Tasks
+    // -------------------------
     getTasks: build.query<Task[], { projectId: number }>({
       query: ({ projectId }) => `tasks?projectId=${projectId}`,
       providesTags: (result) =>
@@ -237,7 +251,6 @@ export const api = createApi({
         { type: "Tasks", id: taskId },
       ],
     }),
-
     updateTask: build.mutation<Task, { taskId: number; data: Partial<Task> }>({
       query: ({ taskId, data }) => ({
         url: `tasks/${taskId}`,
@@ -248,7 +261,6 @@ export const api = createApi({
         { type: "Tasks", id: taskId },
       ],
     }),
-
     deleteTask: build.mutation<{ message: string }, number>({
       query: (id) => ({
         url: `tasks/${id}`,
@@ -256,22 +268,17 @@ export const api = createApi({
       }),
       invalidatesTags: ["Tasks"],
     }),
-    // getCommentsByTask: build.query<Comment[], number>({
-    //   query: (taskId) => `comments/task/${taskId}`,
-    // }),
+
+
+    // -------------------------
+    // Comments
+    // -------------------------
     getCommentsByTask: build.query<Comment[], number>({
       query: (taskId) => `comments/task/${taskId}`,
       providesTags: (result, error, taskId) => [
         { type: "Comments", id: taskId },
       ],
     }),
-    // createComment: build.mutation<Comment, Omit<Comment, "id" | "user">>({
-    //   query: (comment) => ({
-    //     url: `comments`,
-    //     method: "POST",
-    //     body: comment,
-    //   }),
-    // }),
     createComment: build.mutation<
       Comment,
       Pick<Comment, "text" | "taskId" | "userId">
@@ -283,18 +290,9 @@ export const api = createApi({
       }),
       invalidatesTags: (result, error, { taskId }) => [
         { type: "Comments", id: taskId },
-        { type: "Tasks" }, // <-- this tells RTK Query to refetch task list
+        { type: "Tasks" },
       ],
     }),
-    // updateComment: build.mutation<Comment, { commentId: number; text: string }>(
-    //   {
-    //     query: ({ commentId, text }) => ({
-    //       url: `comments/${commentId}`,
-    //       method: "PUT",
-    //       body: { text },
-    //     }),
-    //   },
-    // ),
     updateComment: build.mutation<Comment, { commentId: number; text: string }>(
       {
         query: ({ commentId, text }) => ({
@@ -305,12 +303,6 @@ export const api = createApi({
         invalidatesTags: (result, error, { commentId }) => ["Comments"],
       },
     ),
-    // deleteComment: build.mutation<{ message: string }, number>({
-    //   query: (commentId) => ({
-    //     url: `comments/${commentId}`,
-    //     method: "DELETE",
-    //   }),
-    // }),
     deleteComment: build.mutation<{ message: string }, number>({
       query: (commentId) => ({
         url: `comments/${commentId}`,
@@ -318,6 +310,11 @@ export const api = createApi({
       }),
       invalidatesTags: ["Comments"],
     }),
+
+
+    // -------------------------
+    // Teams
+    // -------------------------
     getUsers: build.query<User[], void>({
       query: () => "users",
       providesTags: ["Users"],
@@ -326,20 +323,29 @@ export const api = createApi({
       query: () => "teams",
       providesTags: ["Teams"],
     }),
-    search: build.query<SearchResults, string>({
-      query: (query) => `search?query=${query}`,
-    }),
     createTeam: build.mutation<Team, Partial<Team>>({
       query: (team) => ({
         url: "teams",
         method: "POST",
         body: team,
       }),
-      invalidatesTags: ["Teams"],
+  invalidatesTags: ["Teams"],
+    }),
+
+
+    // -------------------------
+    // Search
+    // -------------------------
+    search: build.query<SearchResults, string>({
+      query: (query) => `search?query=${query}`,
     }),
   }),
 });
 
+
+// -------------------------
+// Exported Hooks
+// -------------------------
 export const {
   useGetProjectsQuery,
   useCreateProjectMutation,

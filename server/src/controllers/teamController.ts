@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// Get Tasks
+// Get Teams
 export const getTeams = async (req: Request, res: Response): Promise<void> => {
   try {
     const teams = await prisma.team.findMany();

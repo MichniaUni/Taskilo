@@ -1,58 +1,6 @@
-// "use client";
+"use client"; // Enables client-side rendering in Next.js
 
-// import { useGetTeamsQuery } from '@/state/api'
-// import React from 'react'
-// import { useAppSelector } from '../redux';
-// import Header from '@/components/Header';
-// import { DataGrid, GridColDef, GridToolbarContainer, GridToolbarExport, GridToolbarFilterButton } from '@mui/x-data-grid';
-// import { dataGridClassNames, dataGridSxStyles } from '@/lib/utils';
-
-// const CustomToolbar = () => (
-//     <GridToolbarContainer  className="toolbar flex gap-2">
-//         <GridToolbarFilterButton />
-//         <GridToolbarExport />
-//     </GridToolbarContainer>
-// )
-
-// const columns: GridColDef[] = [
-//     {field: "id", headerName: "Team ID", width: 100},
-//     {field: "teamName", headerName: "Team Name", width: 250},
-//     {field: "productOwnerUsername", headerName: "Product Owner", width: 250},
-//     {field: "projectManagerUsername", headerName: "Project Manager", width: 250},
-    
-// ]
-
-// const Teams = () => {
-//     const {data: teams, isLoading, isError} = useGetTeamsQuery();
-//     const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
-
-//     if (isLoading) return<div>Loading...</div>;
-//     if (isError || !teams) return <div>Error getting teams</div>;
-
-//   return (
-//     <div className="flex w-full flex-col p-8">
-//         <Header name="Teams" />
-//         <div className="h-[650px] w-full">
-//             <DataGrid
-//                 rows={teams || []}
-//                 columns={columns}
-//                 pagination
-//                 slots={{
-//                     toolbar: CustomToolbar,
-//                 }}
-//                 className={dataGridClassNames}
-//                 sx={dataGridSxStyles(isDarkMode)}
-//             />
-            
-//         </div>
-//     </div>
-//   )
-// }
-
-// export default Teams
-
-"use client";
-
+// Import dependencies
 import React, { useState } from "react";
 import {
   useGetTeamsQuery,
@@ -71,6 +19,7 @@ import {
 import { dataGridClassNames, dataGridSxStyles } from "@/lib/utils";
 import Modal from "@/components/Modal";
 
+// Custom toolbar for DataGrid with export and filter buttons
 const CustomToolbar = () => (
   <GridToolbarContainer className="toolbar flex gap-2">
     <GridToolbarFilterButton />
@@ -78,6 +27,7 @@ const CustomToolbar = () => (
   </GridToolbarContainer>
 );
 
+// Define column layout for teams table
 const columns: GridColDef[] = [
   { field: "id", headerName: "Team ID", width: 100 },
   { field: "teamName", headerName: "Team Name", width: 250 },
@@ -85,23 +35,27 @@ const columns: GridColDef[] = [
   { field: "projectManagerUsername", headerName: "Project Manager", width: 250 },
 ];
 
+// Main Teams component
 const Teams = () => {
+  // Fetch team and user data
   const { data: teams, isLoading, isError } = useGetTeamsQuery();
   const { data: users } = useGetUsersQuery();
   const [createTeam] = useCreateTeamMutation();
+  // Get theme preference from Redux
   const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
 
+  // Modal and form state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [teamName, setTeamName] = useState("");
   const [productOwnerUserId, setProductOwnerUserId] = useState("");
   const [projectManagerUserId, setProjectManagerUserId] = useState("");
 
+  // Handle team creation form submission
   const handleCreateTeam = async () => {
     if (!teamName.trim()) {
       alert("Team name is required.");
       return;
     }
-
     try {
       await createTeam({
         teamName,
@@ -109,7 +63,7 @@ const Teams = () => {
         projectManagerUserId: projectManagerUserId ? parseInt(projectManagerUserId) : undefined,
       }).unwrap();
 
-      // Reset and close modal
+      // Clear form and close modal
       setTeamName("");
       setProductOwnerUserId("");
       setProjectManagerUserId("");
@@ -120,13 +74,16 @@ const Teams = () => {
     }
   };
 
+  // Show loading or error states
   if (isLoading) return <div>Loading...</div>;
   if (isError || !teams) return <div>Error retrieving teams.</div>;
 
   return (
     <div className="flex w-full flex-col p-8">
+      {/* Page header */}
       <Header name="Teams" />
 
+      {/* Create team button */}
       <div className="mb-4">
         <button
           onClick={() => setIsModalOpen(true)}
@@ -136,6 +93,7 @@ const Teams = () => {
         </button>
       </div>
 
+      {/* Teams DataGrid table */}
       <div className="h-[650px] w-full">
         <DataGrid
           rows={teams}
@@ -150,7 +108,7 @@ const Teams = () => {
         />
       </div>
 
-      {/* Create Team Modal */}
+      {/* Modal for creating a new team */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} name="Create New Team">
         <form
           className="mt-4 space-y-4"
@@ -159,6 +117,7 @@ const Teams = () => {
             handleCreateTeam();
           }}
         >
+          {/* Team name input */}
           <input
             type="text"
             className="w-full rounded border border-gray-300 p-2 dark:bg-dark-tertiary dark:text-white"
@@ -168,6 +127,7 @@ const Teams = () => {
             required
           />
 
+          {/* Product owner dropdown */}
           <select
             aria-label="Select Product Owner"
             value={productOwnerUserId}
@@ -181,7 +141,8 @@ const Teams = () => {
               </option>
             ))}
           </select>
-
+          
+          {/* Project manager dropdown */}
           <select
             aria-label="Select Project Manager"
             value={projectManagerUserId}
@@ -195,7 +156,8 @@ const Teams = () => {
               </option>
             ))}
           </select>
-
+          
+          {/* Submit button */}
           <button
             type="submit"
             className="w-full rounded bg-blue-primary px-4 py-2 text-white hover:bg-blue-600"

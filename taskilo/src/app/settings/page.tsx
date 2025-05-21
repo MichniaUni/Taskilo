@@ -1,7 +1,10 @@
+// Import header component and React
 import Header from "@/components/Header";
 import React from "react";
 
+// Settings component for displaying user profile info
 const Settings = () => {
+  // Hardcoded user settings (replace with real user data if needed)
   const userSettings = {
     username: "johndoe",
     email: "john.doe@example.com",
@@ -9,13 +12,17 @@ const Settings = () => {
     roleName: "Developer",
   };
 
+  // Styling classes
   const labelStyles = "block text-sm font-medium dark:text-white";
   const textStyles =
     "mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 dark:text-white";
 
   return (
     <div className="p-8">
+      {/* Page header */}
       <Header name="Settings" />
+
+      {/* Settings details */}
       <div className="space-y-4">
         <div>
           <label className={labelStyles}>Username</label>

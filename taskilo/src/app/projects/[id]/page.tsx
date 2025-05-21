@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Enables client-side rendering in Next.js
 
 import React, { useState } from 'react';
 import ProjectHeader from "@/app/projects/ProjectHeader";
@@ -9,25 +9,32 @@ import Table from "../TableView";
 import ModalNewTask from "@/components/ModalNewTask";
 import CommentsView from "../CommentsView";
 
-
+// Props definition to extract the project ID from route parameters
 type Props = {
     params: {id: string}
 }
 
+// Main Project component
 const Project = ({ params }: Props) => {
     const { id } = params;
+    // Local state to manage the active tab view (Board, List, Timeline, etc.)
     const [activeTab, setActiveTab] = useState("Board");
+    // Local state to manage visibility of the new task modal
     const [isModalNewTaskOpen, setIsModelNewTaskOpen] = useState(false);
 
 
   return (
     <div>
+        {/* Modal for creating a new task, passing project ID as prop */}
         <ModalNewTask 
         isOpen={isModalNewTaskOpen}
         onClose={() => setIsModelNewTaskOpen(false)}
         id={id}
         />
+        {/* Project header with tab selection functionality */}
         <ProjectHeader activeTab={activeTab} setActiveTab={setActiveTab} />
+        
+        {/* Conditionally render each view based on the selected tab */}
         { activeTab === "Board" && (
           <Board id={id} setIsModelNewTaskOpen={setIsModelNewTaskOpen} />
         )}

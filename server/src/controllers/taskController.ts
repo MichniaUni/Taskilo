@@ -27,23 +27,6 @@ export const getTasks = async (req: Request, res: Response): Promise<void> => {
 };
 
 // Creat Task
-// export const createTask = async (
-//   req: Request,
-//   res: Response
-// ): Promise<void> => {
-//   const {
-//     title,
-//     description,
-//     status,
-//     priority,
-//     tags,
-//     startDate,
-//     dueDate,
-//     points,
-//     projectId,
-//     authorUserId,
-//     assignedUserId,
-//   } = req.body;
 export const createTask = async (
   req: Request,
   res: Response
