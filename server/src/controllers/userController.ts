@@ -24,7 +24,7 @@ export const getUser = async (req: Request, res: Response): Promise<void> => {
     });
 
     if (!user) {
-      res.status(404).json({ message: "User not found" }); // ✅ return 404
+      res.status(404).json({ message: "User not found" }); 
       return;
     }
 
@@ -42,7 +42,7 @@ export const postUser = async (req: Request, res: Response) => {
     const {
       username,
       cognitoId,
-      profilePictureUrl = "i1.jpg",
+      profilePictureUrl = "p13.jpeg",
       teamId = 1,
     } = req.body;
     const newUser = await prisma.user.create({
